@@ -4,6 +4,7 @@
 dox/
 doc/
 *.log
+[Ww]indows/
 
 ################
 ## Autotools
