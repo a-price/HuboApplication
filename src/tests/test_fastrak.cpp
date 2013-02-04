@@ -7,6 +7,7 @@
 
 #include "Fastrak.h"
 #include <Eigen/Geometry>
+#include <boost/thread/thread.hpp>
 #include <iostream>
 
 int main()
@@ -22,6 +23,7 @@ int main()
 			std::cout << "Sensor " << i << ": " << std::endl;
 			std::cout << pose.matrix() << std::endl;
 		}
+		boost::this_thread::sleep( boost::posix_time::milliseconds(1000) );
 	}
 	return 0;
 }

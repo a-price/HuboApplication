@@ -1,10 +1,11 @@
 #################
-## Hubo Specific
+## General
 #################
 dox/
 doc/
 *.log
 [Ww]indows/
+*~
 
 ################
 ## Autotools

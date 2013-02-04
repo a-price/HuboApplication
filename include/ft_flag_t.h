@@ -1,3 +1,7 @@
+
+#ifndef FT_FLAG_T_H
+#define FT_FLAG_T_H
+
 typedef enum
 {
     SUCCESS = 0,	///< The command returned successfully
@@ -7,3 +11,5 @@ typedef enum
 } ft_flag_t;
 
 // Consider converting to enum class for type-safe operation
+
+#endif //FT_FLAG_T_H

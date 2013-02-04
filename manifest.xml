@@ -1,0 +1,17 @@
+<package>
+  <description brief="HuboApplication">
+
+     Demo application showing how to compile and link common libraries used in robotics against the Hubo_Tech wrapper.
+
+  </description>
+  <author>Andrew Price</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ros_baseline</url>
+  <depend package="std_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="tf"/>
+
+</package>
+
+
