@@ -1,9 +1,11 @@
 #include "Fastrak.h"
+#include <iostream>
 
 Fastrak::Fastrak(bool assert)
 {
 	memset( &fastrak, 0, sizeof(fastrak) );
 	initFastrak(assert);
+	fastrakScale = 1;
 }
 
 
@@ -34,6 +36,16 @@ ach_status Fastrak::achUpdate()
 	int r = ACH_OK;
 	size_t fs;
 	r = ach_get( &chan_fastrak, &fastrak, sizeof(fastrak), &fs, NULL, ACH_O_LAST );
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 7; j++)
+		{
+			std::cout << "\t" << fastrak.data[i][j];
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
 	//if( r == ACH_OK )
 	//	daemon_assert( sizeof(fastrak) == fs, __LINE__ );
 }

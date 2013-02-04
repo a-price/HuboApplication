@@ -53,11 +53,23 @@ int main(int argc, char* argv[])
 	{
 		// Write data to ach channel
 		serialize(numChannels, poses, data);
+		for (int i = 0; i < numChannels; i++)
+		{
+			for (int j = 0; j < 7; j++)
+			{
+				std::cout << "\t" << data[i*7+j];
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+
 		ach_put( &chan, data, sizeof(float)*numChannels*7);
 
 		for (int i = 0; i < numChannels; i++)
 		{
-			poses[i].rotate(Eigen::Quaternionf(1,1,1,1));
+			std::cout << poses[i].matrix() << std::endl;
+			poses[i].rotate(Eigen::Quaternionf(1,1,1,1).normalized());
+			poses[i].translation() = Eigen::Vector3f::Random();
 		}
 		boost::this_thread::sleep( boost::posix_time::milliseconds(750) );
 	}

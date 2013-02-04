@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 2.6)
 project(HuboApplication CXX C)
 
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-rosbuild_init()
+rosbuild_init() #export ROS_PACKAGE_PATH=/path/to/proj:$ROS_PACKAGE_PATH
+link_libraries(roscpp roscpp_serialization rosconsole rostime tf)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/find/")
 
