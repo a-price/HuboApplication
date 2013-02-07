@@ -1,7 +1,16 @@
-
+/**
+ * \file ft_flag_t.h
+ * \brief Enumerates possible return values for functions in the Fastrak class.
+ *
+ * \author Andrew Price
+ */
 #ifndef FT_FLAG_T_H
 #define FT_FLAG_T_H
 
+/**
+ * \enum ft_flag_t
+ * \brief Enumerates possible return values for functions in the Fastrak class.
+ */
 typedef enum
 {
     SUCCESS = 0,	///< The command returned successfully

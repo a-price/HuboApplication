@@ -1,6 +1,8 @@
 /**
  * \file TestFastrak.cpp
  * \brief Unit tests for Fastrak class
+ * 
+ * \author Andrew Price
  */
 
 #include "TestFastrak.h"
@@ -66,12 +68,10 @@ void TestFastrak::TestSensorOOB()
 
 void TestFastrak::TestAchChannelName()
 {
-	/*
 	std::cerr << "Testing Fail on Open...";
 	ft_flag_t r = badFastrak->initFastrak();
 	CPPUNIT_ASSERT(r == CHAN_OPEN_FAIL);
 	std::cerr << "Done" << std::endl;
-	*/
 }
 
 void TestFastrak::TestPoseConversions()

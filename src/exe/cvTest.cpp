@@ -1,13 +1,15 @@
-/* HuboWebcamTracking.cpp
- * by Andrew Price
+/**
+ * \file cvTest.cpp
  *
- * Tracks the center of mass of a particular color and
+ * \brief Tracks the center of mass of a particular color and
  * sends its movements over sockets to Hubo.
  * 
  * C++ implementation of tracking code presented at:
  * http://www.aishack.in/2010/07/tracking-colored-objects-in-opencv/
  *
  * NB: You may want to disable auto white balance and auto gain on your camera
+ *
+ * \author Andrew Price
 */
 
 // Boost libraries for sockets and config
@@ -31,7 +33,7 @@ using boost::asio::ip::tcp;
 
 //#define USE_SOCKETS
 
-// Tracking Function
+/// Thresholding Function
 cv::Mat GetThresholdedImage(cv::Mat img)
 {
 	// Convert the image into an HSV image
@@ -52,6 +54,7 @@ cv::Mat GetThresholdedImage(cv::Mat img)
 
 	return imgThreshed;
 }
+
 
 void ParseSocketCommand(char* cmd, int length, double* x, double* y)
 {
@@ -84,8 +87,10 @@ double SimpleFilter(double xCurrent, double xPrevious, double timeStep, double p
 }
 
 /**
-* @function main
-*/
+ * \fn main
+ * \brief Grabs frames from the default camera device, matches them against a color, and sends the x,y position of the CoM.
+ * Also demonstrates boost code for reading in a settings file and sending data over sockets.
+ */
 int main( int argc, const char** argv )
 {
 	// Random Tests

@@ -1,3 +1,10 @@
+/**
+ * \file tf_eigen.cpp
+ * \brief Converts between ROS TF and Eigen data structures for position and orientation.
+ * Note: taken from http://www.ros.org/wiki/tf_conversions.
+ * This functionality will be included in a later version of the core ROS.
+ */
+
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
@@ -26,6 +33,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+
 
 #include "tf_eigen.h"
 

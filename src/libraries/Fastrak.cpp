@@ -1,3 +1,10 @@
+/**
+ * \file Fastrak.cpp
+ * \brief Implements Fastrack access for ACH IPC channels.
+ *
+ * \author Andrew Price
+ */
+
 #include "Fastrak.h"
 #include <iostream>
 

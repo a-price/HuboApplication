@@ -2,7 +2,7 @@
  * \file test_fastrak.cpp
  * \brief Attempts to read Fastrak data published over ach and print it to the terminal
  *
- * \Author Andrew Price
+ * \author Andrew Price
  */
 
 #include "Fastrak.h"

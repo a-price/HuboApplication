@@ -2,7 +2,7 @@
  * \file test_units.cpp
  * \brief Runs all unit tests defined for HuboApplication
  *
- * \Author Andrew Price
+ * \author Andrew Price
  */
 
 #include <cppunit/XmlOutputter.h>
