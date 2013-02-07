@@ -1,0 +1,6 @@
+[submodule "modules/hubo-motion-rt"]
+	path = modules/hubo-motion-rt
+	url = https://github.com/hubo/hubo-motion-rt.git
+[submodule "modules/hubo-ach"]
+	path = modules/hubo-ach
+	url = https://github.com/hubo/hubo-ach.git
