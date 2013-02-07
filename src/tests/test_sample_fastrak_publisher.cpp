@@ -1,3 +1,10 @@
+/**
+ * \file test_sample_fastrak_publisher.cpp
+ * \brief Generates random Fastrak readings and publishes to Ach.
+ * 
+ * \author Andrew Price
+ */
+
 #include <boost/thread/thread.hpp>
 
 #include <stdint.h>
@@ -10,6 +17,12 @@
 #include "ach.h"
 
 
+/**
+ * \brief Copies pose data into an array for transport over Ach
+ * \param[in]	numChannels	Number of Fastrak channels connected
+ * \param[in]	poses		Pointer to array of Isometry3f
+ * \param[out]	data		Data prepared for Ach
+ */
 void serialize(int numChannels, Eigen::Isometry3f* poses, float* data)
 {
 	for (int i = 0; i < numChannels; i++)
@@ -47,7 +60,8 @@ int main(int argc, char* argv[])
 
 	// Create ach channels
 	ach_channel_t chan;
-	ach_status r = ach_open(&chan, "fastrak", NULL);
+	ach_status r = ach_create("fastrak", 10, 3000, NULL);
+	r = ach_open(&chan, "fastrak", NULL);
 
 	while (true)
 	{

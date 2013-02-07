@@ -1,8 +1,9 @@
 #include "Fastrak.h"
 #include <iostream>
 
-Fastrak::Fastrak(bool assert)
+Fastrak::Fastrak(std::string channel, bool assert)
 {
+	fastrak_chan_name = channel;
 	memset( &fastrak, 0, sizeof(fastrak) );
 	initFastrak(assert);
 	fastrakScale = 1;
@@ -17,12 +18,12 @@ Fastrak::~Fastrak(void)
 
 ft_flag_t Fastrak::initFastrak(bool assert)
 {
-	int r = ach_open( &chan_fastrak, FASTRAK_CHAN_NAME, NULL );
+	int r = ach_open( &chan_fastrak, fastrak_chan_name.c_str(), NULL );
 	
 	if( ACH_OK != r )
 	{
-		fprintf(stderr, "Unable to open fastrak channel: (%d) %s\n",
-			r, ach_result_to_string((ach_status_t)r));
+		fprintf(stderr, "\nUnable to open fastrak channel '%s', error: (%d) %s\n",
+			fastrak_chan_name.c_str(), r, ach_result_to_string((ach_status_t)r));
 		//if(assert)
 		//	daemon_assert( ACH_OK == r, __LINE__ );
 		return CHAN_OPEN_FAIL;
@@ -36,7 +37,7 @@ ach_status Fastrak::achUpdate()
 	int r = ACH_OK;
 	size_t fs;
 	r = ach_get( &chan_fastrak, &fastrak, sizeof(fastrak), &fs, NULL, ACH_O_LAST );
-
+	/*
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 7; j++)
@@ -46,11 +47,16 @@ ach_status Fastrak::achUpdate()
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+	*/
 	//if( r == ACH_OK )
 	//	daemon_assert( sizeof(fastrak) == fs, __LINE__ );
 }
 
-void Fastrak::setFastrakScale( double scale ) { fastrakScale = scale; }
+void Fastrak::setFastrakScale( double scale ) 
+{
+	if (scale != 0)
+		fastrakScale = scale;
+}
 double Fastrak::getFastrakScale() { return fastrakScale; };
 int Fastrak::getNumChannels(){ return 4; }
 
@@ -62,7 +68,7 @@ ft_flag_t Fastrak::getPose( Eigen::Vector3d &position, Eigen::Quaterniond &quat,
 		r = achUpdate();
 	}
 
-	if( sensor < getNumChannels() )
+	if( sensor < getNumChannels() && sensor >= 0)
 	{
 		position[0] = fastrak.data[sensor][0]/fastrakScale;
 		position[1] = fastrak.data[sensor][1]/fastrakScale;

@@ -27,7 +27,7 @@
 
 #include <stdio.h>
 
-#define FASTRAK_CHAN_NAME "fastrak"
+//#define FASTRAK_CHAN_NAME "fastrak"
 
 typedef struct
 {
@@ -39,7 +39,7 @@ class Fastrak
 public:
 	double fastrakScale;
 
-	Fastrak(bool assert=false);
+	Fastrak(std::string channel="fastrak", bool assert=false);
 	~Fastrak(void);
 
 	ft_flag_t initFastrak(bool assert=false);
@@ -58,6 +58,7 @@ public:
 private:
 	ach_channel_t chan_fastrak;
 	fastrak_data_c_t fastrak;
+	std::string fastrak_chan_name;
 	
 };
 

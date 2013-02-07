@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(HuboApplication CXX C)
 
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+#set(ROS_PACKAGE_PATH=$ENV{ROS_PACKAGE_PATH} ":${PROJECT_SOURCE_DIR}")
 rosbuild_init() #export ROS_PACKAGE_PATH=/path/to/proj:$ROS_PACKAGE_PATH
 link_libraries(roscpp roscpp_serialization rosconsole rostime tf)
 
@@ -13,7 +14,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 # Include Threading
 find_package (Threads)
-
 link_libraries("${CMAKE_THREAD_LIBS_INIT}")
 
 # Include Boost for pointers and sockets
@@ -32,20 +32,28 @@ link_libraries(${OpenCV_LIBS})
 find_package(Eigen REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+# ACH
+link_libraries(ach)
+
+# Include CppUnit
+find_package(CppUnit)
+include_directories(${CPPUNIT_INCLUDE_DIR})
+link_libraries(${CPPUNIT_LIBRARIES})
+
 # Include the project files
 include_directories(include)
 
 # Include the Hubo_Tech components
 include_directories(Hubo_Tech/include)
 
-# ACH
-link_libraries(ach)
   
 # Collect the source, script and test files
 file(GLOB lib_source "src/libraries/*.cpp")
 LIST(SORT lib_source)
 file(GLOB tests_source "src/tests/*.cpp")
 LIST(SORT tests_source)
+file(GLOB unit_tests_source "src/tests/unit/*.cpp")
+LIST(SORT unit_tests_source)
 file(GLOB scripts_source "src/exe/*.cpp")
 LIST(SORT scripts_source)
 file(GLOB resource_source "resources/*")
@@ -62,7 +70,7 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 foreach(test_src_file ${tests_source})
     get_filename_component(test_base ${test_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}" )
-    add_executable(${test_base} ${test_src_file} ${lib_source})
+    add_executable(${test_base} ${test_src_file} ${lib_source} ${unit_tests_source})
     target_link_libraries(${test_base}) # ${PROJECT_NAME})
     add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
