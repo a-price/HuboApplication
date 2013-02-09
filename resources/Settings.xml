@@ -1,0 +1,6 @@
+<HuboApplication>
+	<NetworkSettings>
+		<IPAddress>192.168.1.245</IPAddress>
+		<Port>12345</Port>
+	</NetworkSettings>
+</HuboApplication>

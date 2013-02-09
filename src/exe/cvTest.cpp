@@ -106,8 +106,8 @@ int main( int argc, const char** argv )
 	/* Sockets code */
 	bool endpointConnected = false;
 	size_t req_len;
-	std::string host = properties.get<std::string>("NetworkSettings.IPAddress");
-	std::string port = properties.get<std::string>("NetworkSettings.Port");
+	std::string host = properties.get<std::string>("HuboApplication.NetworkSettings.IPAddress");
+	std::string port = properties.get<std::string>("HuboApplication.NetworkSettings.Port");
 
 	boost::asio::io_service io_svc;
 	
