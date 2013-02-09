@@ -58,7 +58,7 @@ void TestFastrak::TestSensorOOB()
 
 	std::cerr << "Testing Good...";
 	r = goodFastrak->getPose(pose, goodFastrak->getNumChannels()-1);
-	CPPUNIT_ASSERT(r == SUCCESS);
+	CPPUNIT_ASSERT(r == SUCCESS || r == FASTRAK_STALE);
 
 	std::cerr << "Testing Upper Bound...";
 	r = goodFastrak->getPose(pose, goodFastrak->getNumChannels()+1);
