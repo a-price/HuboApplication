@@ -16,7 +16,8 @@ ColorTracker::ColorTracker()
 	params.upperColorBound = cv::Scalar(190,256,256);
 	params.erosionRadius = 5;
 	params.dilationRadius = 5;
-	params.blurRadius = 5;
+	params.blurRadius = 2;
+	params.displayThresholdedImage = false;
 	mParameters = params;
 }
 
@@ -37,7 +38,12 @@ cv::Mat ColorTracker::thresholdImage(cv::Mat target)
 	cv::Mat imgThreshed;
 
 	// Filter the image
-	cv::GaussianBlur(imgHSV,imgHSV, cv::Size(5,5), 5);
+	if (mParameters.blurRadius != 0)
+	{
+		cv::GaussianBlur(imgHSV,imgHSV, 
+			cv::Size(mParameters.blurRadius * 2 + 1,mParameters.blurRadius * 2 + 1),
+			mParameters.blurRadius * 2 + 1);
+	}
 
 	// Threshold the HSV image
 	cv::inRange(imgHSV, mParameters.lowerColorBound, mParameters.upperColorBound, imgThreshed);
@@ -53,7 +59,6 @@ cv::Point ColorTracker::getCoM(cv::Mat target)
 	cv::Mat imgThresh = thresholdImage(target);
 
 	// Perform a morphological opening
-// TODO: incorporate parameters for erode and dilate
 	cv::Mat eElement = cv::getStructuringElement(
 		cv::MORPH_ELLIPSE,
 		cv::Size(2*mParameters.erosionRadius+1,2*mParameters.erosionRadius+1),
@@ -67,7 +72,11 @@ cv::Point ColorTracker::getCoM(cv::Mat target)
 	cv::erode(imgThresh, imgThresh, eElement);
 	cv::dilate(imgThresh, imgThresh, dElement);
 
-	cv::imshow("thresh",imgThresh);
+	// Possibly show image
+	if (mParameters.displayThresholdedImage)
+	{
+		cv::imshow("thresh",imgThresh);
+	}
 
 	// Calculate the moments to estimate the position of the ball
 	cv::Moments moments = cv::moments(imgThresh, 1);

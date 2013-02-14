@@ -1,8 +1,7 @@
 /**
  * \file cvTest.cpp
  *
- * \brief Tracks the center of mass of a particular color and
- * sends its movements over sockets to Hubo.
+ * \brief Tracks the center of mass of a particular color.
  * 
  * C++ implementation of tracking code presented at:
  * http://www.aishack.in/2010/07/tracking-colored-objects-in-opencv/
@@ -112,9 +111,6 @@ int main( int argc, const char** argv )
 
 		// Release the thresholded image... we need no memory leaks.. please
 		//imgRedThresh.release();
-
-		//delete moments;
-
 	}
 
 	// We're done using the camera. Other applications can now use it
