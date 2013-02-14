@@ -6,15 +6,18 @@
  */
 
 #include "ColorTracker.h"
+#include <opencv2/highgui/highgui.hpp>
+#include <iostream>
 
 ColorTracker::ColorTracker()
 {
 	ColorTrackerParams params;
 	params.lowerColorBound = cv::Scalar(160,65,60);
 	params.upperColorBound = cv::Scalar(190,256,256);
-	params.erosionRadius = 3;
-	params.dilationRadius = 3;
+	params.erosionRadius = 5;
+	params.dilationRadius = 5;
 	params.blurRadius = 5;
+	mParameters = params;
 }
 
 ColorTracker::ColorTracker(ColorTrackerParams params)
@@ -51,8 +54,20 @@ cv::Point ColorTracker::getCoM(cv::Mat target)
 
 	// Perform a morphological opening
 // TODO: incorporate parameters for erode and dilate
-	cv::erode(imgThresh, imgThresh, cv::Mat());
-	cv::dilate(imgThresh, imgThresh, cv::Mat());
+	cv::Mat eElement = cv::getStructuringElement(
+		cv::MORPH_ELLIPSE,
+		cv::Size(2*mParameters.erosionRadius+1,2*mParameters.erosionRadius+1),
+		cv::Point(mParameters.erosionRadius,mParameters.erosionRadius));
+	cv::Mat dElement = cv::getStructuringElement(
+		cv::MORPH_ELLIPSE,
+		cv::Size(2*mParameters.dilationRadius+1,2*mParameters.dilationRadius+1),
+		cv::Point(mParameters.dilationRadius,mParameters.dilationRadius));
+
+
+	cv::erode(imgThresh, imgThresh, eElement);
+	cv::dilate(imgThresh, imgThresh, dElement);
+
+	cv::imshow("thresh",imgThresh);
 
 	// Calculate the moments to estimate the position of the ball
 	cv::Moments moments = cv::moments(imgThresh, 1);
