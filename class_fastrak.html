@@ -30,7 +30,7 @@
    <div id="projectname">HuboSampleApplication
    
    </div>
-   <div id="projectbrief">Testing out Hubo c++ interface</div>
+   <div id="projectbrief">A starting point for programs leveraging Hubo&#39;s C++ interface</div>
   </td>
   
   
@@ -107,8 +107,11 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609">getNumChannels</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">If dynamic # of channels, returns the current number of sensors connected to the <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a>, otherwise, 4.  <a href="#a07c7d03b70fe7338d559e9d60c7d8609"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="ft__flag__t_8h.html#a6fdfcda9a39aa5fc05d4b4ca5d8e35a8">ft_flag_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874">getPose</a> (Eigen::Vector3d &amp;position, Eigen::Quaterniond &amp;quat, int sensor=1, bool update=true)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the position and orientation of the indexed <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a> sensor.  <a href="#afb6153c1f3bfa7cd381e3ba6c8469874"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="ft__flag__t_8h.html#a6fdfcda9a39aa5fc05d4b4ca5d8e35a8">ft_flag_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fastrak.html#ac3943c4228900550dc5893b77301f2a9">getPose</a> (Eigen::Vector3d &amp;position, Eigen::Matrix3d &amp;rotation, int sensor=1, bool update=true)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the position and orientation of the indexed <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a> sensor.  <a href="#ac3943c4228900550dc5893b77301f2a9"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="ft__flag__t_8h.html#a6fdfcda9a39aa5fc05d4b4ca5d8e35a8">ft_flag_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fastrak.html#a80283150332f50c381791f1036ff65f5">getPose</a> (Eigen::Isometry3d &amp;tf, int sensor=1, bool update=true)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the position and orientation of the indexed <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a> sensor.  <a href="#a80283150332f50c381791f1036ff65f5"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Encapsulates Fastrack access for Ach IPC channels. </p>
@@ -270,6 +273,18 @@ Here is the call graph for this function:</div>
 </div>
 <div class="memdoc">
 
+<p>Returns the position and orientation of the indexed <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a> sensor. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">position</td><td>Position Vector. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">quat</td><td>Orientation Quaternion. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sensor</td><td>Sensor index to return. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">update</td><td>Forces object to reload data from the Ach channel. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Status of the pose call </dd></dl>
+
 <p><div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -318,12 +333,24 @@ Here is the call graph for this function:</div>
 </div>
 <div class="memdoc">
 
+<p>Returns the position and orientation of the indexed <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a> sensor. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">position</td><td>Position Vector. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">rotation</td><td>Orientation Rotation Matrix. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sensor</td><td>Sensor index to return. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">update</td><td>Forces object to reload data from the Ach channel. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Status of the pose call </dd></dl>
+
 <p><div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_fastrak_ac3943c4228900550dc5893b77301f2a9_cgraph.png" border="0" usemap="#class_fastrak_ac3943c4228900550dc5893b77301f2a9_cgraph" alt=""/></div>
 <map name="class_fastrak_ac3943c4228900550dc5893b77301f2a9_cgraph" id="class_fastrak_ac3943c4228900550dc5893b77301f2a9_cgraph">
-<area shape="rect" id="node3" href="class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874" title="Fastrak::getPose" alt="" coords="176,32,299,61"/><area shape="rect" id="node5" href="class_fastrak.html#a120495071ea82a8768d1007f6b3cf3e6" title="Refreshes the data pulled from the Ach channel. Called by getPose if update == true." alt="" coords="367,5,503,35"/><area shape="rect" id="node7" href="class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609" title="If dynamic # of channels, returns the current number of sensors connected to the Fastrak, otherwise, 4." alt="" coords="348,59,521,88"/></map>
+<area shape="rect" id="node3" href="class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874" title="Returns the position and orientation of the indexed Fastrak sensor." alt="" coords="176,32,299,61"/><area shape="rect" id="node5" href="class_fastrak.html#a120495071ea82a8768d1007f6b3cf3e6" title="Refreshes the data pulled from the Ach channel. Called by getPose if update == true." alt="" coords="367,5,503,35"/><area shape="rect" id="node7" href="class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609" title="If dynamic # of channels, returns the current number of sensors connected to the Fastrak, otherwise, 4." alt="" coords="348,59,521,88"/></map>
 </div>
 </p>
 
@@ -360,12 +387,23 @@ Here is the call graph for this function:</div>
 </div>
 <div class="memdoc">
 
+<p>Returns the position and orientation of the indexed <a class="el" href="class_fastrak.html" title="Encapsulates Fastrack access for Ach IPC channels.">Fastrak</a> sensor. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">tf</td><td>3D Pose of the sensor </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sensor</td><td>Sensor index to return. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">update</td><td>Forces object to reload data from the Ach channel. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Status of the pose call </dd></dl>
+
 <p><div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_fastrak_a80283150332f50c381791f1036ff65f5_cgraph.png" border="0" usemap="#class_fastrak_a80283150332f50c381791f1036ff65f5_cgraph" alt=""/></div>
 <map name="class_fastrak_a80283150332f50c381791f1036ff65f5_cgraph" id="class_fastrak_a80283150332f50c381791f1036ff65f5_cgraph">
-<area shape="rect" id="node3" href="class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874" title="Fastrak::getPose" alt="" coords="176,32,299,61"/><area shape="rect" id="node5" href="class_fastrak.html#a120495071ea82a8768d1007f6b3cf3e6" title="Refreshes the data pulled from the Ach channel. Called by getPose if update == true." alt="" coords="367,5,503,35"/><area shape="rect" id="node7" href="class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609" title="If dynamic # of channels, returns the current number of sensors connected to the Fastrak, otherwise, 4." alt="" coords="348,59,521,88"/></map>
+<area shape="rect" id="node3" href="class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874" title="Returns the position and orientation of the indexed Fastrak sensor." alt="" coords="176,32,299,61"/><area shape="rect" id="node5" href="class_fastrak.html#a120495071ea82a8768d1007f6b3cf3e6" title="Refreshes the data pulled from the Ach channel. Called by getPose if update == true." alt="" coords="367,5,503,35"/><area shape="rect" id="node7" href="class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609" title="If dynamic # of channels, returns the current number of sensors connected to the Fastrak, otherwise, 4." alt="" coords="348,59,521,88"/></map>
 </div>
 </p>
 
@@ -414,7 +452,7 @@ Here is the call graph for this function:</div>
 <p>Sets a new scale on the &lt;X,Y,Z&gt; component of the pose. Note that the scale works as x/scale, not x*scale. Also, setting the scale to 0 will be ignored. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">New</td><td>value for the scaling factor. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">scale</td><td>New value for the scaling factor. </td></tr>
   </table>
   </dd>
 </dl>
@@ -431,7 +469,7 @@ Here is the call graph for this function:</div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -443,7 +481,7 @@ Here is the call graph for this function:</div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Feb 15 2013 07:09:19 for HuboSampleApplication by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Feb 15 2013 08:50:56 for HuboSampleApplication by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

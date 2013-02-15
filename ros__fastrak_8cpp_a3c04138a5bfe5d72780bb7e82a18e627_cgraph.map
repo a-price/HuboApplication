@@ -1,6 +1,6 @@
 <map id="G" name="G">
 <area shape="rect" id="node3" href="$ros__fastrak_8cpp.html#a837a577a02db125c4c73dcc1085dfc70" title="publishFastrack" alt="" coords="104,59,219,88"/>
-<area shape="rect" id="node5" href="$class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874" title="Fastrak::getPose" alt="" coords="287,32,409,61"/>
+<area shape="rect" id="node5" href="$class_fastrak.html#afb6153c1f3bfa7cd381e3ba6c8469874" title="Returns the position and orientation of the indexed Fastrak sensor." alt="" coords="287,32,409,61"/>
 <area shape="rect" id="node11" href="$namespacetf.html#ae6f138b15c3fbfb437e2e1b6eba659e1" title="tf::TransformEigenToTF" alt="" coords="268,85,428,115"/>
 <area shape="rect" id="node7" href="$class_fastrak.html#a120495071ea82a8768d1007f6b3cf3e6" title="Refreshes the data pulled from the Ach channel. Called by getPose if update == true." alt="" coords="497,5,633,35"/>
 <area shape="rect" id="node9" href="$class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609" title="If dynamic # of channels, returns the current number of sensors connected to the Fastrak, otherwise, 4." alt="" coords="479,59,652,88"/>
