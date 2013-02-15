@@ -45,7 +45,7 @@ include_directories(include)
 
 # Include the Hubo_Tech components
 include_directories(modules/hubo-motion-rt/include)
-include_directories(modules/hubo-ach/include)
+#include_directories(modules/hubo-ach/include)
 
   
 # Collect the source, script and test files

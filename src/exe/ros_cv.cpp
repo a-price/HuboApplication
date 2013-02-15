@@ -21,11 +21,6 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/imgproc/imgproc.hpp>     //make sure to include the relevant headerfiles
 #include <opencv2/highgui/highgui.hpp>
-//#include <cv_bridge/CvBridge.h>
-//#include <cvaux.h>
-//#include <math.h>
-//#include <cxcore.h>
-//#include <highgui.h>
 
 #include "ColorTracker.h"
 
