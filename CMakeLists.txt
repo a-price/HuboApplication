@@ -5,7 +5,7 @@ project(HuboApplication CXX C)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #execute_process(COMMAND export "ROS_PACKAGE_PATH=${PROJECT_SOURCE_DIR}:$ROS_PACKAGE_PATH")
 rosbuild_init() #export ROS_PACKAGE_PATH=/path/to/proj:$ROS_PACKAGE_PATH
-link_libraries(roscpp roscpp_serialization rosconsole rostime tf)
+link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf cv_bridge image_transport)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/find/")
 
