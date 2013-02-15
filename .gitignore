@@ -6,6 +6,7 @@ doc/
 *.log
 [Ww]indows/
 *~
+lib/
 
 ################
 ## Autotools
