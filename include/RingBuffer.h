@@ -1,6 +1,6 @@
 /**
- * \file RingBuffer.cpp
- * \brief Implements a simple ring buffer.
+ * \file RingBuffer.h
+ * \brief Defines and implements a simple ring buffer.
  * 
  * \author Andrew Price
  */
@@ -8,7 +8,7 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
 
-#define BUFFER_LOW_THRESHOLD 20
+//#define BUFFER_LOW_THRESHOLD 20
 
 template <class templateClass>
 class RingBuffer

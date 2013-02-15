@@ -74,7 +74,7 @@ public:
 	 * \fn setFastrakScale
 	 * \brief Sets a new scale on the <X,Y,Z> component of the pose.
 	 * Note that the scale works as x/scale, not x*scale. Also, setting the scale to 0 will be ignored.
-	 * \param [in] New value for the scaling factor.
+	 * \param [in] scale New value for the scaling factor.
 	 */
 	void setFastrakScale( double scale );
 
@@ -94,7 +94,7 @@ public:
 	int getNumChannels();
 
 	/**
-	 * \fn getPose
+	 * \fn ft_flag_t Fastrak::getPose( Eigen::Vector3d& position, Eigen::Quaterniond& quat, int sensor=1, bool update=true )
 	 * \brief Returns the position and orientation of the indexed Fastrak sensor
 	 * \param [out] position Position Vector.
 	 * \param [out] quat Orientation Quaternion.
@@ -105,7 +105,7 @@ public:
 	ft_flag_t getPose( Eigen::Vector3d& position, Eigen::Quaterniond& quat, int sensor=1, bool update=true );
 
 	/**
-	 * \fn getPose
+	 * \fn ft_flag_t getPose( Eigen::Vector3d& position, Eigen::Matrix3d& rotation, int sensor=1, bool update=true )
 	 * \brief Returns the position and orientation of the indexed Fastrak sensor
 	 * \param [out] position Position Vector.
 	 * \param [out] rotation Orientation Rotation Matrix.
@@ -116,7 +116,7 @@ public:
 	ft_flag_t getPose( Eigen::Vector3d& position, Eigen::Matrix3d& rotation, int sensor=1, bool update=true );
 
 	/**
-	 * \fn getPose
+	 * \fn ft_flag_t getPose( Eigen::Isometry3d &tf, int sensor=1, bool update=true )
 	 * \brief Returns the position and orientation of the indexed Fastrak sensor
 	 * \param [out] tf 3D Pose of the sensor
 	 * \param [in] sensor Sensor index to return.
