@@ -1,7 +1,0 @@
-/**
-\mainpage Hubo Application Index Page
-
-\section Purpose
-This serves as a starting point for robotics projects that incorporate common libraries such as OpenCV, Eigen, PCL, ROS, etc. The goal is to have a default configuration that can easily branch off into new projects that have an intuitive, repeatable directory structure and easily include these core functionalities so you can sit down and start coding. Eventually, I'd like to make the CMake file customizable to only install a subset of the features, but I'm a bit busy for now.
-
- */
