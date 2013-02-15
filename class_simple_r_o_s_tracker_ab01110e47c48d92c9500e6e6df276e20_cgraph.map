@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_color_tracker.html#aa8ed2c7fcb008e13c6a6e4c3508325ee" title="Threshold the image, erode and dilate it, and compute the central moment." alt="" coords="249,5,399,35"/>
+<area shape="rect" id="node5" href="$class_color_tracker.html#a452e06403c437904184172690d0226ce" title="Detect colored blobs." alt="" coords="448,5,643,35"/>
+</map>

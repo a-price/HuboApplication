@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_simple_r_o_s_tracker.html#ab01110e47c48d92c9500e6e6df276e20" title="SimpleROSTracker::imageCb" alt="" coords="309,5,504,35"/>
+<area shape="rect" id="node5" href="$class_color_tracker.html#aa8ed2c7fcb008e13c6a6e4c3508325ee" title="Threshold the image, erode and dilate it, and compute the central moment." alt="" coords="553,5,703,35"/>
+<area shape="rect" id="node7" href="$class_color_tracker.html#a452e06403c437904184172690d0226ce" title="Detect colored blobs." alt="" coords="752,5,947,35"/>
+</map>

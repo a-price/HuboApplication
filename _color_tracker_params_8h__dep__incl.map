@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$_color_tracker_8h.html" title="Thresholds an image for a given color and returns the center of mass." alt="" coords="161,83,313,112"/>
+<area shape="rect" id="node5" href="$cv_test2_8cpp.html" title="src/exe/cvTest2.cpp" alt="" coords="5,160,147,189"/>
+<area shape="rect" id="node7" href="$ros__cv_8cpp.html" title="ROS node to track the center of mass of a particular color." alt="" coords="171,160,304,189"/>
+<area shape="rect" id="node9" href="$_color_tracker_8cpp.html" title="Thresholds an image for a given color and returns the center of mass." alt="" coords="328,160,520,189"/>
+</map>

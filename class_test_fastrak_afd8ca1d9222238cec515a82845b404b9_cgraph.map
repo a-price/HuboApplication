@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_fastrak.html#a515c22374646d3613f4fba5e324cef51" title="Sets a new scale on the &lt;X,Y,Z&gt; component of the pose. Note that the scale works as x/scale..." alt="" coords="255,5,423,35"/>
+<area shape="rect" id="node5" href="$class_fastrak.html#a0b130f284f98ad06d96edb406b873189" title="Returns the current scale on the &lt;X,Y,Z&gt; component of the pose. Note that the scale works as x/scale..." alt="" coords="255,59,423,88"/>
+</map>

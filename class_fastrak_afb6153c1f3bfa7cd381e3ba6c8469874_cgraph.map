@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_fastrak.html#a120495071ea82a8768d1007f6b3cf3e6" title="Refreshes the data pulled from the Ach channel. Called by getPose if update == true." alt="" coords="196,5,332,35"/>
+<area shape="rect" id="node5" href="$class_fastrak.html#a07c7d03b70fe7338d559e9d60c7d8609" title="If dynamic # of channels, returns the current number of sensors connected to the Fastrak, otherwise, 4." alt="" coords="177,59,351,88"/>
+</map>
