@@ -51,6 +51,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+eclipse/
 
 # External tool builders
 .externalToolBuilders/

@@ -1,6 +1,6 @@
 /**
  * \file Fastrak.cpp
- * \brief Implements Fastrack access for ACH IPC channels.
+ * \brief Implements Fastrak access for ACH IPC channels.
  *
  * \author Andrew Price
  */
@@ -41,7 +41,7 @@ ft_flag_t Fastrak::initFastrak(bool assert)
 
 ach_status Fastrak::achUpdate()
 {
-	int r = ACH_OK;
+	ach_status r = ACH_OK;
 	size_t fs;
 	r = ach_get( &chan_fastrak, &fastrak, sizeof(fastrak), &fs, NULL, ACH_O_LAST );
 	/*
@@ -57,6 +57,8 @@ ach_status Fastrak::achUpdate()
 	*/
 	//if( r == ACH_OK )
 	//	daemon_assert( sizeof(fastrak) == fs, __LINE__ );
+
+	return r;
 }
 
 void Fastrak::setFastrakScale( double scale ) 
