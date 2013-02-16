@@ -54,6 +54,8 @@ void RotationEigenToTF(const Eigen::Quaterniond& k, tf::Quaternion& t);
 
 void TransformTFToEigen(const tf::Transform &t, Eigen::Affine3d &k);
 
+void TransformTFToEigen(const tf::Transform &t, Eigen::Isometry3d &k);
+
 void TransformEigenToTF(const Eigen::Affine3d &k, tf::Transform &t);
 
 void TransformEigenToTF(const Eigen::Isometry3d &k, tf::Transform &t);

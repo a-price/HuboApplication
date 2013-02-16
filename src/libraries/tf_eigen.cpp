@@ -86,6 +86,15 @@ void TransformTFToEigen(const tf::Transform &t, Eigen::Affine3d &k)
 
 };
 
+void TransformTFToEigen(const tf::Transform &t, Eigen::Isometry3d &k)
+{
+	Eigen::Affine3d affine;
+	TransformTFToEigen(t, affine);
+
+	k.translation() = affine.translation();
+	k.linear() = affine.rotation();
+}
+
 void TransformEigenToTF(const Eigen::Affine3d &k, tf::Transform &t)
 {
 	t.setOrigin(tf::Vector3(k.matrix()(0,3), k.matrix()(1,3), k.matrix()(2,3)));

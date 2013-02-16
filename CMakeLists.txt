@@ -35,6 +35,9 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 # ACH
 link_libraries(ach)
 
+# hubo-motion-rt
+link_libraries(hubotech daemonizer rt huboparams)
+
 # Include CppUnit
 find_package(CppUnit)
 include_directories(${CPPUNIT_INCLUDE_DIR})

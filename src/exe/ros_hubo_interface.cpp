@@ -29,8 +29,12 @@ public:
 	void jointCallback(const sensor_msgs::JointStateConstPtr& joints)
 	{
 		Eigen::Matrix< double, 6, 1 > cmdJoints;
-		cmdJoints[3] = joints->position[0];
-		hubo.setArmAngles(0, cmdJoints);
+		cmdJoints[3] = -joints->position[0];
+		ROS_INFO("Got a joint: %f\n", cmdJoints[3]);
+		//hubo.setArmAngles(0, cmdJoints);
+		//hubo.setJointAngle(-joints->position[0]);
+		hubo.setJointAngle(REB, 0.5);
+		hubo.sendControls();
 		hubo.update();
 	}
 
@@ -43,7 +47,7 @@ private:
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "simple_tracker");
+	ros::init(argc, argv, "ROSHubo");
 
 	ROSHubo hi;
 
