@@ -75,8 +75,10 @@ typedef struct
 {
 	control_mode controlMode;      ///< Tells the manipulation daemon whether to use workspace or joint-space control
 	pose_angle_mode poseMode;      ///< Tells the manipulation daemon whether to expect quaternion or euler angle orientation parameters
+	bool incrementalMode;          ///< Tells teh manipulation daemon whether to use incremental or absolute position specifications
 	
-	ee_pose_t targetPose;          ///< Contains all pose parameters to pass to manipulation daemon for ik-control
+	ee_pose_t targetPoseLeft;      ///< Contains all pose parameters to pass to manipulation daemon for Left Handik-control
+	ee_pose_t targetPoseRight;     ///< Contains all pose parameters to pass to manipulation daemon for Right Hand ik-control
 	manip_q_vector_t targetJoints; ///< Contains all joint parameters to pass to manipulation daemon for joint control
 } manipulation_instruction_t;
 
