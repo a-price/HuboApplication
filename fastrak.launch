@@ -1,0 +1,4 @@
+<launch>
+	<node name="ros_fastrak" pkg="HuboApplication" type="ros_fastrak" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find HuboApplication)/fastrak.vcg" />
+</launch>

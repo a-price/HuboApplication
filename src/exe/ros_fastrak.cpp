@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 	ros::NodeHandle node;
 
 	ros::Rate r(10); // 10 hz
-	while (true)
+	while (ros::ok())
 	{
 		publishFastrack();
 		ros::spinOnce();
