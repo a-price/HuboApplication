@@ -16,35 +16,41 @@
 
 #include <Eigen/Core>
 
-#include "Hubo_Tech.h"
+//#include "Hubo_Tech.h"
+#include "HuboManipulator.h"
+#include "HuboStateROS.h"
 
 class ROSHubo
 {
 public:
 	ROSHubo()
 	{
-		m_JointSubscriber = nh_.subscribe("/hubo/joints", 1, &ROSHubo::jointCallback, this);
+		m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
+		m_JointPublisher = nh_.advertise("/hubo/joints", 1);
 	}
 
-	void jointCallback(const sensor_msgs::JointStateConstPtr& joints)
+	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
 	{
 		Eigen::Matrix< double, 6, 1 > cmdJoints;
 		cmdJoints[3] = -joints->position[0];
 		ROS_INFO("Got a joint: %f\n", cmdJoints[3]);
-		//hubo.setArmAngles(0, cmdJoints);
-		//hubo.setJointAngle(-joints->position[0]);
-		//hubo.setJointAngle(REB, 0.5);
-		//hubo.sendControls();
-		hubo.update();
-		double remote = hubo.getJointAngle(REB);
-		ROS_INFO("Remote value: %f\n", remote);
+		m_Manip.setJoint(REB, -joints->position[0]);
+		
+		ROS_INFO("Remote value: %f\n", m_HuboState.getState().joint[REB].pos);
+	}
+
+	void publishState()
+	{
+		m_JointPublisher.publish(m_HuboState.getJointState());
 	}
 
 private:
 	ros::NodeHandle nh_;
 	ros::Subscriber m_JointSubscriber;
+	ros::Publisher m_JointPublisher;
 	
-	Hubo_Tech hubo;
+	HuboManipulator m_Manip;
+	HuboStateROS m_HuboState;
 };
 
 int main(int argc, char** argv)
@@ -54,7 +60,13 @@ int main(int argc, char** argv)
 
 	ROSHubo hi;
 
-	ros::spin();
+	ros::Rate r(5); // 5 hz
+	while (ros::ok())
+	{
+		hi.publishState();
+		ros::spinOnce();
+		r.sleep();
+	}
 
 	return 0;
 }

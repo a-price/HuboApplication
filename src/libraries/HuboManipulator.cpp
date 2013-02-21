@@ -41,23 +41,40 @@ void HuboManipulator::setAngleMode(pose_angle_mode mode)
 	mInstruction.poseMode = mode;
 }
 
-void HuboManipulator::setPose(Eigen::Isometry3d pose)
+void HuboManipulator::setPose(Eigen::Isometry3d pose, int side)
 {
-	mInstruction.targetPose.x = pose.translation().x();
-	mInstruction.targetPose.y = pose.translation().y();
-	mInstruction.targetPose.z = pose.translation().z();
+	ee_pose_t newPose;
+	newPose.x = pose.translation().x();
+	newPose.y = pose.translation().y();
+	newPose.z = pose.translation().z();
 
 	if (mInstruction.poseMode == QUATERNION)
 	{
 		Eigen::Quaterniond quat(pose.rotation());
-		mInstruction.targetPose.i = quat.x();
-		mInstruction.targetPose.j = quat.y();
-		mInstruction.targetPose.k = quat.z();
-		mInstruction.targetPose.w = quat.w();
+		newPose.i = quat.x();
+		newPose.j = quat.y();
+		newPose.k = quat.z();
+		newPose.w = quat.w();
 	}
 	else if (mInstruction.poseMode == EULER_ANGLE)
 	{
 		// TODO: What is this?
+	}
+	if (side == RIGHT)
+	{
+		mInstruction.targetPoseRight = newPose;
+	}
+	else if (side == LEFT)
+	{
+		mInstruction.targetPoseLeft = newPose;
+	}
+}
+
+void HuboManipulator::setJoint(int jointIndex, double val)
+{
+	if (jointIndex < HUBO_JOINT_COUNT)
+	{
+		mInstruction.targetJoints.data[jointIndex] = val;
 	}
 }
 

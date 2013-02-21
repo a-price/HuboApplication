@@ -14,7 +14,7 @@
 
 Fastrak fastrak;
 
-void publishFastrack()
+void publishFastrak()
 {
 	static tf::TransformBroadcaster br;
 	tf::Transform transform;
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	ros::Rate r(10); // 10 hz
 	while (ros::ok())
 	{
-		publishFastrack();
+		publishFastrak();
 		ros::spinOnce();
 		r.sleep();
 	}

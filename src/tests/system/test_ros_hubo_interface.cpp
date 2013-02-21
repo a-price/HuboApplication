@@ -25,7 +25,7 @@ class ROSHuboTester
 public:
 	ROSHuboTester()
 	{
-		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/joints", 1);
+		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/target_joints", 1);
 	}
 
 	void publishSample(int seed)
