@@ -7,7 +7,7 @@
 
 #include "HuboStateROS.h"
 
-HuboStateROS::HuboStateROS(std::string chanName = "hubo-state")
+HuboStateROS::HuboStateROS(std::string chanName)
 {
 	mAchChanName = chanName;
 	memset(&mHuboState, 0, sizeof(mHuboState));
@@ -62,6 +62,7 @@ sensor_msgs::JointState HuboStateROS::getJointState(bool update)
 
 	// How is hubo time specified?
 	js.header.stamp = ros::Time::now(); // (mHuboState.time);
+
 
 	return js;
 }

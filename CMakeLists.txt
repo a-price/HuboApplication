@@ -47,7 +47,7 @@ link_libraries(${CPPUNIT_LIBRARIES})
 include_directories(include)
 
 # Include the Hubo_Tech components
-include_directories(modules/hubo-motion-rt/include)
+#include_directories(modules/hubo-motion-rt/include)
 #include_directories(modules/hubo-ach/include)
 
   

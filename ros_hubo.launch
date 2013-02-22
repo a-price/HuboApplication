@@ -1,5 +1,5 @@
 <launch>
-	<node name="ros_hubo_interface" pkg="HuboApplication" type="ros_hubo_interface" />
+	<node name="ros_hubo_interface" pkg="HuboApplication" type="ros_hubo_interface" output="screen"/>
 	<node name="test_ros_hubo_interface" pkg="HuboApplication" type="test_ros_hubo_interface" />
 	<!--node name="rviz" pkg="rviz" type="rviz" args="-d $(find HuboApplication)/fastrak.vcg" /-->
 </launch>

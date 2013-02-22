@@ -19,6 +19,7 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <geometry_msgs/Point.h>
 #include <opencv2/imgproc/imgproc.hpp>     //make sure to include the relevant headerfiles
 #include <opencv2/highgui/highgui.hpp>
 
@@ -40,6 +41,7 @@ public:
 	{
 		image_sub_ = it_.subscribe("/camera/color/image", 1, &SimpleROSTracker::imageCb, this);
 		image_pub_= it_.advertise("/camera/tracked",1);
+		pub = nh_.advertise<geometry_msgs::Point>("/CoM",1);
 	}
 
 	~SimpleROSTracker()
@@ -58,6 +60,8 @@ public:
 		cv::circle(imgPtr->image, CoM, 10, CV_RGB(255,0,0));
 
 		image_pub_.publish(imgPtr->toImageMsg());
+
+		//pub.publish(geometry_msgs::Point(CoM.x, CoM.y, 0));
 	}
 };
 

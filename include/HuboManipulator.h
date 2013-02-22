@@ -8,12 +8,12 @@
 #ifndef HUBO_MANIPULATOR_H
 #define HUBO_MANIPULATOR_H
 
-#include <ach.h>
-#include <hubo.h>
+#include "hubo.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 #include <string>
+#include <stdio.h>
 
 #include "manipulation_instruction_t.h"
 
@@ -25,7 +25,7 @@ class HuboManipulator
 {
 public:
 	/// Constructor
-	HuboManipulator(std::string chanName = "manipulation");
+	HuboManipulator(std::string chanName = "hubo-manip");
 
 	/// Destructor
 	~HuboManipulator();

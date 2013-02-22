@@ -85,6 +85,7 @@ void HuboManipulator::setJoints(manip_q_vector_t q)
 
 void HuboManipulator::sendCommand()
 {
+	//fprintf(stderr, "Sending ach instruction.");
 	ach_put(&mAchChan, &mInstruction, sizeof(mInstruction));
 }
 

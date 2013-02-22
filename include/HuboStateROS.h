@@ -8,13 +8,13 @@
 #ifndef HUBO_STATE_ROS_H
 #define HUBO_STATE_ROS_H
 
-#include <ach.h>
 #include <hubo.h>
 #include <hubo_joint_names.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 #include <string>
+#include <stdio.h>
 #include <sensor_msgs/JointState.h>
 
 /**

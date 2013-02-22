@@ -26,21 +26,23 @@ public:
 	ROSHubo()
 	{
 		m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
-		m_JointPublisher = nh_.advertise("/hubo/joints", 1);
+		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/joint_states", 1);
 	}
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
 	{
 		Eigen::Matrix< double, 6, 1 > cmdJoints;
 		cmdJoints[3] = -joints->position[0];
-		ROS_INFO("Got a joint: %f\n", cmdJoints[3]);
+		//ROS_INFO("Got a joint: %f\n", cmdJoints[3]);
 		m_Manip.setJoint(REB, -joints->position[0]);
+		m_Manip.sendCommand();
 		
-		ROS_INFO("Remote value: %f\n", m_HuboState.getState().joint[REB].pos);
+		//ROS_INFO("Remote value: %f\n", m_HuboState.getState().joint[RKN].pos);
 	}
 
 	void publishState()
 	{
+		//ROS_INFO("Publishing State...");
 		m_JointPublisher.publish(m_HuboState.getJointState());
 	}
 
