@@ -40,14 +40,20 @@ public:
 	{
 		//Eigen::Matrix< double, 6, 1 > cmdJoints;
 		tf::StampedTransform tS,tE,tW;
+		try{
 		listener.lookupTransform("/openni_depth_frame","/right_shoulder_1",ros::Time(0),tS);
 		listener.lookupTransform("/openni_depth_frame","/right_elbow_1",ros::Time(0),tE);
 		listener.lookupTransform("/openni_depth_frame","/right_hand_1",ros::Time(0),tW);
+		}
+		catch (tf::TransformException ex)
+		{
+			ROS_ERROR("%s", ex.what());
+		}
 
 		sensor_msgs::JointState joints;
 		double angle = getAngle(tS,tE,tW);
 		joints.position.push_back(angle);
-		//m_JointPublisher.publish(joints);
+		m_JointPublisher.publish(joints);
 	}
 
 /*
@@ -101,8 +107,8 @@ int main(int argc, char** argv)
 	int count = 0;
 	while (ros::ok())
 	{
-		hi.publishSample(count);
-		//hi.publishElbow();
+		//hi.publishSample(count);
+		hi.publishElbow();
 
 		std::cout << "Published..." << std::endl;
 		ros::spinOnce();
