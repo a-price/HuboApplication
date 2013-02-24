@@ -23,7 +23,7 @@
 
 // Message Results
 #include "ft_flag_t.h"
-#include "daemonizer.h"
+//#include "daemonizer.h"
 
 #include <stdio.h>
 

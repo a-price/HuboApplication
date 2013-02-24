@@ -35,7 +35,7 @@ typedef enum
  * myPose.data[1] or myPose.y, and they will refer to the same chunk of memory.
  * Names are provided for both quaternion and Euler angles.
  */
-typedef union ee_pose_t
+typedef union 
 {
 	double data[7];  ///< Array of raw data containing pose info.
 	struct
@@ -54,7 +54,7 @@ typedef union ee_pose_t
 			};
 		};
 	};
-};
+}ee_pose_t;
 
 /**
  * \struct manip_q_vector_t

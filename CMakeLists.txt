@@ -16,7 +16,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 find_package (Threads)
 link_libraries("${CMAKE_THREAD_LIBS_INIT}")
 
-# Include Boost for pointers and sockets
+# Include Boost
 find_package(Boost REQUIRED)# COMPONENTS system filesystem thread)
 include_directories(${BOOST_INCLUDE_DIRS})
 link_libraries(${BOOST_LIBRARIES})
@@ -26,6 +26,11 @@ link_libraries(boost_system boost_thread) #???
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIR})
 link_libraries(${OpenCV_LIBS})
+
+# Include the PCL library
+find_package(PCL REQUIRED)
+include_directories(${PCL_INCLUDE_DIR})
+link_libraries(${PCL_LIBS})
 
 # Include the Eigen library
 #set(EIGEN3_INCLUDE_DIR "/usr/include/eigen3")

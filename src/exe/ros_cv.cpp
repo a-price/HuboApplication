@@ -12,18 +12,70 @@
 * \author Andrew Price
 */
 
-#include <ros/ros.h>
 #include <stdio.h>
 #include <iostream>
+
+// ROS includes
+#include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/Point.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/sync_policies/approximate_time.h>
+
+// OpenCV includes
 #include <opencv2/imgproc/imgproc.hpp>     //make sure to include the relevant headerfiles
 #include <opencv2/highgui/highgui.hpp>
 
+// PCL includes
+#include <pcl/ros/conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+
 #include "ColorTracker.h"
+
+typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,sensor_msgs::Image, sensor_msgs::PointCloud2> KinectSyncPolicy;
+
+class SimpleKinectTracker
+{
+public:
+	SimpleKinectTracker(ros::NodeHandle nh)
+		: visual_sub_ (nh, "/camera/rgb/image", 1),
+		  depth_sub_ (nh, "/camera/depth/image", 1),
+		  cloud_sub_ (nh, "/cloud?", 1),
+		  sync_(KinectSyncPolicy(1), visual_sub_, depth_sub_, cloud_sub_)
+	{
+		sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2, _3));
+	}
+
+	void kinectCallback(const sensor_msgs::ImageConstPtr color, const sensor_msgs::ImageConstPtr depth, const sensor_msgs::PointCloud2ConstPtr points)
+	{
+		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(color, "bgr8");
+		
+		cv::Point CoM = tracker.getCoM(imgPtr->image);
+
+		pcl::PointCloud<pcl::PointXYZRGB> pCloud;
+		pcl::fromROSMsg(*points, pCloud);
+		ROS_INFO("Cloud Size: %f x %f\n", CoM.x, CoM.y);
+		pcl::PointXYZRGB target = pCloud.points[CoM.x + CoM.y * pCloud.width];
+
+		// Get body to camera tf
+		ROS_INFO("Target Point: <%f,%f,%f>\n", target.x, target.y, target.z);
+	}
+private:
+	ros::NodeHandle nh_;
+	message_filters::Subscriber<sensor_msgs::Image> visual_sub_ ;
+	message_filters::Subscriber<sensor_msgs::Image> depth_sub_;
+	message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub_;
+	message_filters::Synchronizer<KinectSyncPolicy> sync_;
+
+	ColorTracker tracker;
+};
 
 class SimpleROSTracker
 {
@@ -34,6 +86,7 @@ class SimpleROSTracker
 	image_transport::Subscriber image_sub_; //image subscriber 
 	image_transport::Publisher image_pub_; //image publisher
 	std_msgs::String msg;
+
 public:
 
 	SimpleROSTracker()
