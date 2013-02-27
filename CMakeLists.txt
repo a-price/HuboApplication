@@ -1,6 +1,7 @@
 # Project Description
 cmake_minimum_required(VERSION 2.6)
 project(HuboApplication CXX C)
+set(CMAKE_CXX_FLAGS "-std=c++0x")
 
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #execute_process(COMMAND export "ROS_PACKAGE_PATH=${PROJECT_SOURCE_DIR}:$ROS_PACKAGE_PATH")
@@ -29,8 +30,10 @@ link_libraries(${OpenCV_LIBS})
 
 # Include the PCL library
 find_package(PCL REQUIRED)
-include_directories(${PCL_INCLUDE_DIR})
-link_libraries(${PCL_LIBS})
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+link_libraries(${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
 
 # Include the Eigen library
 #set(EIGEN3_INCLUDE_DIR "/usr/include/eigen3")

@@ -10,8 +10,9 @@
 #include <ros/ros.h>
 #include <stdio.h>
 #include <iostream>
-#include <std_msgs/String.h>
+#include <string>
 
+#include <std_msgs/String.h>
 #include <sensor_msgs/JointState.h>
 
 #include <Eigen/Core>
@@ -31,10 +32,19 @@ public:
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
 	{
-		Eigen::Matrix< double, 6, 1 > cmdJoints;
-		cmdJoints[3] = -joints->position[0];
-		//ROS_INFO("Got a joint: %f\n", cmdJoints[3]);
-		m_Manip.setJoint(REB, -joints->position[0]);
+		// Look up the index of each joint by its name and add it to the control signal
+		std::map<std::string, int>::const_iterator it;
+		for (int i = 0; i < joints->position.size(); i++)
+		{
+			it = HUBO_JOINT_NAME_TO_INDEX.find(joints->name[i]);
+			if (it == HUBO_JOINT_NAME_TO_INDEX.end())
+			{
+				ROS_ERROR("Joint name '%s' is unknown.", joints->name[i].c_str());
+				continue;
+			}
+			m_Manip.setJoint(it->second,joints->position[i]);
+		}
+
 		m_Manip.sendCommand();
 		
 		//ROS_INFO("Remote value: %f\n", m_HuboState.getState().joint[RKN].pos);
