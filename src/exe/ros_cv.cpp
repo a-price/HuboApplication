@@ -44,24 +44,26 @@ typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,senso
 class SimpleKinectTracker
 {
 public:
-	SimpleKinectTracker(ros::NodeHandle nh)
-		: visual_sub_ (nh, "/camera/rgb/image", 1),
-		  depth_sub_ (nh, "/camera/depth/image", 1),
-		  cloud_sub_ (nh, "/cloud?", 1),
+	SimpleKinectTracker()
+		: visual_sub_ (nh_, "/camera/rgb/image_rect_color", 1),
+		  depth_sub_ (nh_, "/camera/depth/image", 1),
+		  cloud_sub_ (nh_, "/camera/depth/points", 1),
 		  sync_(KinectSyncPolicy(1), visual_sub_, depth_sub_, cloud_sub_)
 	{
+		ROS_INFO("Initialized.");
 		sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2, _3));
 	}
 
 	void kinectCallback(const sensor_msgs::ImageConstPtr color, const sensor_msgs::ImageConstPtr depth, const sensor_msgs::PointCloud2ConstPtr points)
 	{
+		ROS_INFO("Got sync'd frames.");
 		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(color, "bgr8");
 		
 		cv::Point CoM = tracker.getCoM(imgPtr->image);
 
 		pcl::PointCloud<pcl::PointXYZRGB> pCloud;
 		pcl::fromROSMsg(*points, pCloud);
-		ROS_INFO("Cloud Size: %f x %f\n", CoM.x, CoM.y);
+		ROS_INFO("Cloud Size: %i x %i\n", CoM.x, CoM.y);
 		pcl::PointXYZRGB target = pCloud.points[CoM.x + CoM.y * pCloud.width];
 
 		// Get body to camera tf
@@ -122,7 +124,8 @@ int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "simple_tracker");
 
-	SimpleROSTracker st;
+	//SimpleROSTracker st;
+	SimpleKinectTracker skt;
 
 	ros::spin();
 
