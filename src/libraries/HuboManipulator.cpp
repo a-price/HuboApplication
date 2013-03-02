@@ -5,7 +5,7 @@
  * \author Andrew Price
  */
 
-#include "HuboManipulator.h"
+#include "HuboApplication/HuboManipulator.h"
 
 
 HuboManipulator::HuboManipulator(std::string chanName)

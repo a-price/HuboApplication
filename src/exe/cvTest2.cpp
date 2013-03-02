@@ -22,7 +22,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include "ColorTracker.h"
+#include "HuboApplication/ColorTracker.h"
 
 
 /**

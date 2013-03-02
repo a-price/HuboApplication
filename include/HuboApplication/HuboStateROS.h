@@ -9,7 +9,7 @@
 #define HUBO_STATE_ROS_H
 
 #include <hubo.h>
-#include <hubo_joint_names.h>
+#include "HuboApplication/hubo_joint_names.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -18,7 +18,7 @@
 #include <sensor_msgs/JointState.h>
 
 /**
- * \class HuboManipulator
+ * \class HuboStateROS
  * \brief Provides ROS representation of Hubo's state
  */
 class HuboStateROS

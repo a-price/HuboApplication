@@ -11,8 +11,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "Fastrak.h"
-#include "ft_flag_t.h"
+#include "HuboApplication/Fastrak.h"
 #include <ach.h>
 
 /**

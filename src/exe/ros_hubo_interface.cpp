@@ -18,8 +18,8 @@
 #include <Eigen/Core>
 
 //#include "Hubo_Tech.h"
-#include "HuboManipulator.h"
-#include "HuboStateROS.h"
+#include "HuboApplication/HuboManipulator.h"
+#include "HuboApplication/HuboStateROS.h"
 #include "HuboApplication/SetHuboJointPositions.h"
 #include "HuboApplication/SetHuboArmPose.h"
 

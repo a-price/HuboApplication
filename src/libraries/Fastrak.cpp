@@ -5,7 +5,7 @@
  * \author Andrew Price
  */
 
-#include "Fastrak.h"
+#include "HuboApplication/Fastrak.h"
 #include <iostream>
 
 Fastrak::Fastrak(std::string channel, bool assert)

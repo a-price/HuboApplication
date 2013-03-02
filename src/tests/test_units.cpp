@@ -16,7 +16,6 @@
 #include <iostream>
 #include <string>
 
-#include "Fastrak.h"
 
 int main()
 {

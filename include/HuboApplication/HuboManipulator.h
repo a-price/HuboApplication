@@ -15,7 +15,7 @@
 #include <string>
 #include <stdio.h>
 
-#include "manipulation_instruction_t.h"
+#include "HuboApplication/manipulation_instruction_t.h"
 
 /**
  * \class HuboManipulator

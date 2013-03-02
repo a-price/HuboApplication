@@ -37,7 +37,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
-#include "ColorTracker.h"
+#include "HuboApplication/ColorTracker.h"
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,sensor_msgs::Image, sensor_msgs::PointCloud2> KinectSyncPolicy;
 

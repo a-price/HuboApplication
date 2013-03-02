@@ -9,8 +9,8 @@
 #include <tf/transform_broadcaster.h>
 #include <string>
 #include <iostream>
-#include "Fastrak.h"
-#include "tf_eigen.h"
+#include "HuboApplication/Fastrak.h"
+#include "HuboApplication/tf_eigen.h"
 
 Fastrak fastrak;
 

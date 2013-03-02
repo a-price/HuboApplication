@@ -5,7 +5,7 @@
  * \author Andrew Price
  */
 
-#include "HuboStateROS.h"
+#include "HuboApplication/HuboStateROS.h"
 
 HuboStateROS::HuboStateROS(std::string chanName)
 {

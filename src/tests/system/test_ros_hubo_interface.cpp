@@ -17,8 +17,8 @@
 
 #include <Eigen/Core>
 
-#include "tf_eigen.h"
-#include "hubo_joint_names.h"
+#include "HuboApplication/tf_eigen.h"
+#include "HuboApplication/hubo_joint_names.h"
 
 
 class ROSHuboTester

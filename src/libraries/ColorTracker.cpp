@@ -5,7 +5,7 @@
  * \author Andrew Price
  */
 
-#include "ColorTracker.h"
+#include "HuboApplication/ColorTracker.h"
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
