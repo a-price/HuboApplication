@@ -20,6 +20,8 @@
 //#include "Hubo_Tech.h"
 #include "HuboManipulator.h"
 #include "HuboStateROS.h"
+#include "HuboApplication/SetHuboJointPositions.h"
+#include "HuboApplication/SetHuboArmPose.h"
 
 class ROSHubo
 {
