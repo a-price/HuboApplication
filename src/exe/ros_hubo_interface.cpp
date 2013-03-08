@@ -40,6 +40,7 @@ public:
 			if (!homeSuccess)
 			{
 				m_Manip.homeJoint(i, false);
+				ROS_ERROR("Failed to home %i.", i);
 			}
 		}
 		if (!fullHome)

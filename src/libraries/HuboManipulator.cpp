@@ -43,6 +43,7 @@ void HuboManipulator::setAngleMode(pose_angle_mode mode)
 
 void HuboManipulator::setPose(Eigen::Isometry3d pose, int side)
 {
+	mInstruction.controlMode = END_EFFECTOR;
 	ee_pose_t newPose;
 	newPose.x = pose.translation().x();
 	newPose.y = pose.translation().y();
@@ -72,6 +73,7 @@ void HuboManipulator::setPose(Eigen::Isometry3d pose, int side)
 
 void HuboManipulator::setJoint(int jointIndex, double val)
 {
+	mInstruction.controlMode = JOINT_VECTOR;
 	if (jointIndex < NUM_UPPER_BODY_JOINTS && jointIndex >= 0)
 	{
 		mInstruction.targetJoints.data[jointIndex] = val;
@@ -80,13 +82,18 @@ void HuboManipulator::setJoint(int jointIndex, double val)
 
 void HuboManipulator::setJoints(manip_q_vector_t q)
 {
+	mInstruction.controlMode = JOINT_VECTOR;
 	mInstruction.targetJoints = q;
 }
 
 void HuboManipulator::homeJoints(bool immediate)
 {
 	mInstruction.controlMode = HOME_JOINTS;
-	memset(&mInstruction.targetJoints, 1, sizeof(mInstruction.targetJoints));
+	//memset(&mInstruction.targetJoints, 1, sizeof(mInstruction.targetJoints));
+	for (int i = 0; i < NUM_UPPER_BODY_JOINTS; i++)
+	{
+		mInstruction.targetJoints.data[i] = 1;
+	}
 	if (immediate) sendCommand();
 }
 
@@ -110,10 +117,19 @@ void HuboManipulator::homeJoint(int jointIndex, bool immediate)
 void HuboManipulator::sendCommand()
 {
 	ach_status_t s = ach_put(&mAchChan, &mInstruction, sizeof(mInstruction));
+	clearInstructionData();
 }
 
 void HuboManipulator::sendCommand(manipulation_instruction_t inst)
 {
 	mInstruction = inst;
 	sendCommand();
+}
+
+void HuboManipulator::clearInstructionData()
+{
+	// Clear the joint and pose information after sending or changing message types
+	memset(&mInstruction.targetJoints, 0, sizeof(mInstruction.targetJoints));
+	memset(&mInstruction.targetPoseLeft, 0, sizeof(mInstruction.targetPoseLeft));
+	memset(&mInstruction.targetPoseRight, 0, sizeof(mInstruction.targetPoseRight));
 }

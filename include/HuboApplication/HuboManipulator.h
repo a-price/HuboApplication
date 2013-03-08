@@ -45,7 +45,7 @@ public:
 	void sendCommand();
 	void sendCommand(manipulation_instruction_t inst);
 
-	hubo_state getState();
+	void clearInstructionData();
 
 private:
 	ach_channel_t mAchChan;

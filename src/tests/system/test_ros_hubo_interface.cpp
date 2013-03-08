@@ -42,7 +42,7 @@ public:
 	{
 		//Eigen::Matrix< double, 6, 1 > cmdJoints;
 		sensor_msgs::JointState joints;
-		joints.position.push_back((cos(seed/50.0)+1.0)/3.0);
+		joints.position.push_back(-(cos(seed/50.0)+1.0)/3.0);
 		joints.name.push_back(HUBO_JOINT_NAMES[REB]);
 		m_JointPublisher.publish(joints);
 	}
@@ -50,7 +50,7 @@ public:
 	void callService(int seed)
 	{
 		sensor_msgs::JointState joints;
-		joints.position.push_back((cos(seed/50.0)+1.0)/3.0);
+		joints.position.push_back(-(cos(seed/50.0)+1.0)/3.0);
 		joints.name.push_back(HUBO_JOINT_NAMES[REB]);
 		
 		HuboApplication::SetHuboJointPositions srv;
