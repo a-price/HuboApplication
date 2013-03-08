@@ -17,7 +17,6 @@
 
 #include <Eigen/Core>
 
-//#include "Hubo_Tech.h"
 #include "HuboApplication/HuboManipulator.h"
 #include "HuboApplication/HuboStateROS.h"
 #include "HuboApplication/SetHuboJointPositions.h"
@@ -28,8 +27,51 @@ class ROSHubo
 public:
 	ROSHubo()
 	{
-		m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
+		// Set up hubo
+		m_Manip.homeJoints();
+		m_Manip.sendCommand();
+		usleep(2000000);
+		bool fullHome = true;
+		hubo_state s = m_HuboState.getState(true);
+		for (int i = 0; i < NUM_UPPER_BODY_JOINTS; i++)
+		{
+			bool homeSuccess = (s.status[i].homeFlag == HUBO_HOME_OK);
+			fullHome = fullHome && homeSuccess;
+			if (!homeSuccess)
+			{
+				m_Manip.homeJoint(i, false);
+			}
+		}
+		if (!fullHome)
+		{
+			m_Manip.sendCommand();
+			usleep(2000000);
+		}
+
+		//m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
 		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/joint_states", 1);
+
+		m_JointService = nh_.advertiseService("set_hubo_joints", &ROSHubo::srvSetHuboJointPositions, this);
+	}
+
+	bool srvSetHuboJointPositions(HuboApplication::SetHuboJointPositions::Request &req,
+	                              HuboApplication::SetHuboJointPositions::Response &res)
+	{
+		// Look up the index of each joint by its name and add it to the control signal
+		sensor_msgs::JointState joints = req.Targets;
+        std::map<std::string, int>::const_iterator it;
+        for (int i = 0; i < joints.position.size(); i++)
+        {
+            it = HUBO_JOINT_NAME_TO_INDEX.find(joints.name[i]);
+            if (it == HUBO_JOINT_NAME_TO_INDEX.end())
+            {
+                ROS_ERROR("Joint name '%s' is unknown.", joints.name[i].c_str());
+                continue;
+            }
+            m_Manip.setJoint(it->second,joints.position[i]);
+        }
+
+        m_Manip.sendCommand();
 	}
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
@@ -62,6 +104,8 @@ private:
 	ros::NodeHandle nh_;
 	ros::Subscriber m_JointSubscriber;
 	ros::Publisher m_JointPublisher;
+
+	ros::ServiceServer m_JointService;
 	
 	HuboManipulator m_Manip;
 	HuboStateROS m_HuboState;
@@ -70,6 +114,31 @@ private:
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "ROSHubo");
+	ROS_ERROR("Setting up Hubo Relay with userID: %i.", geteuid());
+
+	// Initialize Ach channels
+	if (geteuid() == 0 && system(NULL))
+	{
+		int i = 0;
+		i = i | system("ach -1 -C \"hubo-state\" -m 10 -n 3000 -o 666");
+		i = i | system("ach -1 -C \"hubo-manip\" -m 10 -n 3000 -o 666");
+
+		if (i != 0) 
+		{
+			ROS_ERROR("Failed to create ach channel.");
+			return -1;
+		}
+
+		i = i | system("achd pull -d 192.168.1.245 \"hubo-state\"");
+		i = i | system("achd push -d 192.168.1.245 \"hubo-manip\"");
+
+		if (i != 0) 
+		{
+			ROS_ERROR("Failed to push ach channel.");
+			return -1;
+		}
+	}
+
 	ROS_INFO("Started Hubo Relay.");
 
 	ROSHubo hi;

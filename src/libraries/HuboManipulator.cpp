@@ -72,7 +72,7 @@ void HuboManipulator::setPose(Eigen::Isometry3d pose, int side)
 
 void HuboManipulator::setJoint(int jointIndex, double val)
 {
-	if (jointIndex < HUBO_JOINT_COUNT)
+	if (jointIndex < NUM_UPPER_BODY_JOINTS && jointIndex >= 0)
 	{
 		mInstruction.targetJoints.data[jointIndex] = val;
 	}
@@ -83,10 +83,33 @@ void HuboManipulator::setJoints(manip_q_vector_t q)
 	mInstruction.targetJoints = q;
 }
 
+void HuboManipulator::homeJoints(bool immediate)
+{
+	mInstruction.controlMode = HOME_JOINTS;
+	memset(&mInstruction.targetJoints, 1, sizeof(mInstruction.targetJoints));
+	if (immediate) sendCommand();
+}
+
+void HuboManipulator::homeJoints(manip_q_vector_t q, bool immediate)
+{
+	mInstruction.controlMode = HOME_JOINTS;
+	mInstruction.targetJoints = q;
+	if (immediate) sendCommand();
+}
+
+void HuboManipulator::homeJoint(int jointIndex, bool immediate)
+{
+	mInstruction.controlMode = HOME_JOINTS;
+	if (jointIndex < NUM_UPPER_BODY_JOINTS && jointIndex >= 0)
+	{
+		mInstruction.targetJoints.data[jointIndex] = 1;
+	}
+	if (immediate) sendCommand();
+}
+
 void HuboManipulator::sendCommand()
 {
-	//fprintf(stderr, "Sending ach instruction.");
-	ach_put(&mAchChan, &mInstruction, sizeof(mInstruction));
+	ach_status_t s = ach_put(&mAchChan, &mInstruction, sizeof(mInstruction));
 }
 
 void HuboManipulator::sendCommand(manipulation_instruction_t inst)

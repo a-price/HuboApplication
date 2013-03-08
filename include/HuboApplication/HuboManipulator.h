@@ -38,6 +38,10 @@ public:
 	void setJoint(int jointIndex, double val);
 	void setJoints(manip_q_vector_t q);
 
+	void homeJoints(bool immediate = false);
+	void homeJoints(manip_q_vector_t q, bool immediate = false);
+	void homeJoint(int jointIndex, bool immediate = false);
+
 	void sendCommand();
 	void sendCommand(manipulation_instruction_t inst);
 

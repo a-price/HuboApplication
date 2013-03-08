@@ -15,7 +15,8 @@
 typedef enum
 {
 	END_EFFECTOR,   ///< Position the end-effector at the target pose using inverse kinematics
-	JOINT_VECTOR    ///< Generate a trajectory in joint space only
+	JOINT_VECTOR,   ///< Generate a trajectory in joint space only
+	HOME_JOINTS     ///< Attempt to home any joints in the manip_q_vector_t that are nonzero and non-NaN
 } control_mode;
 
 /**
@@ -61,11 +62,18 @@ typedef union
  * \brief Contains all joint parameters to pass to manipulation daemon for joint control
  * Note that the joints are indexed according to the #defines provide by hubo.h.
  * This means data[WST] will get/set the trunk yaw joint.
+ * In order to send a "don't care" condition, send NaN for a particular joint. These will be ignored.
  */
 typedef struct 
 {
 	double data[1+3+7+7]; ///< Data for two arms, head P/T2, and torso. Sequence is identical to hubo.h #defines (WST, RPY, etc.)
 } manip_q_vector_t;
+
+/**
+ * \var NUM_UPPER_BODY_JOINTS
+ * \brief Defines length of upper body q vector
+ */
+const int NUM_UPPER_BODY_JOINTS = 1+3+7+7;
 
 /**
  * \struct manipulation_instruction_t
@@ -74,10 +82,10 @@ typedef struct
 typedef struct
 {
 	control_mode controlMode;      ///< Tells the manipulation daemon whether to use workspace or joint-space control
-	pose_angle_mode poseMode;      ///< Tells the manipulation daemon whether to expect quaternion or euler angle orientation parameters
-	bool incrementalMode;          ///< Tells teh manipulation daemon whether to use incremental or absolute position specifications
+	pose_angle_mode poseMode;      ///< Tells the manipulation daemon whether to expect quaternion or Euler angle orientation parameters
+	bool incrementalMode;          ///< Tells the manipulation daemon whether to use incremental or absolute position specifications
 	
-	ee_pose_t targetPoseLeft;      ///< Contains all pose parameters to pass to manipulation daemon for Left Handik-control
+	ee_pose_t targetPoseLeft;      ///< Contains all pose parameters to pass to manipulation daemon for Left Hand ik-control
 	ee_pose_t targetPoseRight;     ///< Contains all pose parameters to pass to manipulation daemon for Right Hand ik-control
 	manip_q_vector_t targetJoints; ///< Contains all joint parameters to pass to manipulation daemon for joint control
 } manipulation_instruction_t;

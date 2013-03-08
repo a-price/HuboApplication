@@ -45,7 +45,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 link_libraries(ach)
 
 # hubo-motion-rt
-link_libraries(hubotech daemonizer rt huboparams)
+link_libraries(huboctrl daemonizer rt huboparams)
 
 # Include CppUnit
 find_package(CppUnit)
@@ -53,7 +53,8 @@ include_directories(${CPPUNIT_INCLUDE_DIR})
 link_libraries(${CPPUNIT_LIBRARIES})
 
 # Include the project files
-include_directories(include)
+include_directories("include")
+include_directories("srv_gen/cpp/include")
 
 # Include the Hubo_Tech components
 #include_directories(modules/hubo-motion-rt/include)
