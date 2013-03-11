@@ -35,7 +35,8 @@ public:
 	ROSHuboTester()
 	{
 		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/target_joints", 1);
-		m_Client = nh_.serviceClient<HuboApplication::SetHuboJointPositions>("set_hubo_joints");
+		m_JointClient = nh_.serviceClient<HuboApplication::SetHuboJointPositions>("/hubo/set_joints");
+		m_PoseClient = nh_.serviceClient<HuboApplication::SetHuboArmPose>("/hubo/set_arm");
 	}
 
 	void publishSample(int seed)
@@ -47,7 +48,7 @@ public:
 		m_JointPublisher.publish(joints);
 	}
 	
-	void callService(int seed)
+	void callJointService(int seed)
 	{
 		sensor_msgs::JointState joints;
 		joints.position.push_back(-(cos(seed/50.0)+1.0)/3.0);
@@ -55,7 +56,7 @@ public:
 		
 		HuboApplication::SetHuboJointPositions srv;
 		srv.request.Targets = joints;
-		if (m_Client.call(srv))
+		if (m_JointClient.call(srv))
 		{
 			ROS_INFO("Service returned %i.", srv.response.Success);
 		}
@@ -65,11 +66,29 @@ public:
 		}
 	}
 	
+	void callPoseService(int seed)
+	{
+		geometry_msgs::Pose pose;
+		int side = 0;
+		/*  */
+		HuboApplication::SetHuboArmPose srv;
+		srv.request.Target = pose;
+		srv.request.ArmIndex = side;
+		if (m_PoseClient.call(srv))
+		{
+			ROS_INFO("Service returned %i.", srv.response.Success);
+		}
+		else
+		{
+			ROS_ERROR("Service call did not return.");
+		}
+	}
 
 private:
 	ros::NodeHandle nh_;
 	ros::Publisher m_JointPublisher;
-	ros::ServiceClient m_Client;
+	ros::ServiceClient m_JointClient;
+	ros::ServiceClient m_PoseClient;
 	
 };
 
@@ -86,7 +105,7 @@ int main(int argc, char** argv)
 	while (ros::ok())
 	{
 //		hi.publishSample(count);
-		hi.callService(count);
+		hi.callJointService(count);
 		
 		ros::spinOnce();
 
