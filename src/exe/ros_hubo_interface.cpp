@@ -56,23 +56,23 @@ public:
 	}
 
 	bool srvSetHuboJointPositions(HuboApplication::SetHuboJointPositions::Request &req,
-	                              HuboApplication::SetHuboJointPositions::Response &res)
+								  HuboApplication::SetHuboJointPositions::Response &res)
 	{
 		// Look up the index of each joint by its name and add it to the control signal
 		sensor_msgs::JointState joints = req.Targets;
-        std::map<std::string, int>::const_iterator it;
-        for (int i = 0; i < joints.position.size(); i++)
-        {
-            it = HUBO_JOINT_NAME_TO_INDEX.find(joints.name[i]);
-            if (it == HUBO_JOINT_NAME_TO_INDEX.end())
-            {
-                ROS_ERROR("Joint name '%s' is unknown.", joints.name[i].c_str());
-                continue;
-            }
-            m_Manip.setJoint(it->second,joints.position[i]);
-        }
+		std::map<std::string, int>::const_iterator it;
+		for (int i = 0; i < joints.position.size(); i++)
+		{
+			it = HUBO_JOINT_NAME_TO_INDEX.find(joints.name[i]);
+			if (it == HUBO_JOINT_NAME_TO_INDEX.end())
+			{
+				ROS_ERROR("Joint name '%s' is unknown.", joints.name[i].c_str());
+				continue;
+			}
+			m_Manip.setJoint(it->second,joints.position[i]);
+		}
 
-        m_Manip.sendCommand();
+		m_Manip.sendCommand();
 	}
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
