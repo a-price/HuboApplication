@@ -14,6 +14,7 @@
 
 #include <std_msgs/String.h>
 #include <sensor_msgs/JointState.h>
+#include <eigen_conversions/eigen_msg.h>
 
 #include <Eigen/Core>
 
@@ -50,14 +51,16 @@ public:
 		}
 
 		//m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
-		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/joint_states", 1);
+		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/joint_states", 1);
 
-		m_JointService = nh_.advertiseService("set_hubo_joints", &ROSHubo::srvSetHuboJointPositions, this);
+		m_JointService = nh_.advertiseService("/hubo/set_joints", &ROSHubo::srvSetHuboJointPositions, this);
+		m_PoseService = nh_.advertiseService("/hubo/set_arm", &ROSHubo::srvSetHuboArmPose, this);
 	}
 
 	bool srvSetHuboJointPositions(HuboApplication::SetHuboJointPositions::Request &req,
 								  HuboApplication::SetHuboJointPositions::Response &res)
 	{
+		bool response = true;
 		// Look up the index of each joint by its name and add it to the control signal
 		sensor_msgs::JointState joints = req.Targets;
 		std::map<std::string, int>::const_iterator it;
@@ -67,12 +70,32 @@ public:
 			if (it == HUBO_JOINT_NAME_TO_INDEX.end())
 			{
 				ROS_ERROR("Joint name '%s' is unknown.", joints.name[i].c_str());
-				continue;
+                		response = false;
 			}
-			m_Manip.setJoint(it->second,joints.position[i]);
-		}
+            		else
+            		{
+            			m_Manip.setJoint(it->second,joints.position[i]);
+            		}
+        	}
 
+        	m_Manip.sendCommand();
+        	res.Success = response;
+	}
+	
+	bool srvSetHuboArmPose(HuboApplication::SetHuboArmPose::Request &req,
+	                       HuboApplication::SetHuboArmPose::Response &res)
+	{
+		bool response = true;
+		Eigen::Affine3d tempPose;
+		Eigen::Isometry3d armPose;
+
+		
+		tf::poseMsgToEigen(req.Target, tempPose);
+		armPose.translation() = tempPose.translation();
+		armPose.linear() = tempPose.rotation();
+		m_Manip.setPose(armPose, req.ArmIndex);
 		m_Manip.sendCommand();
+        	res.Success = response;
 	}
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
@@ -107,6 +130,7 @@ private:
 	ros::Publisher m_JointPublisher;
 
 	ros::ServiceServer m_JointService;
+	ros::ServiceServer m_PoseService;
 	
 	HuboManipulator m_Manip;
 	HuboStateROS m_HuboState;
