@@ -80,6 +80,7 @@ public:
 
 			m_Manip.sendCommand();
 			res.Success = response;
+		return response;
 	}
 	
 	bool srvSetHuboArmPose(HuboApplication::SetHuboArmPose::Request &req,
@@ -89,13 +90,21 @@ public:
 		Eigen::Affine3d tempPose;
 		Eigen::Isometry3d armPose;
 
-		
 		tf::poseMsgToEigen(req.Target, tempPose);
-		armPose.translation() = tempPose.translation();
-		armPose.linear() = tempPose.rotation();
+		//std::cerr << tempPose.matrix() << std::endl;
+
+		armPose = tempPose.matrix();
+		//armPose.translation() = tempPose.translation();
+		//armPose.linear() = tempPose.rotation();
+		//std::cerr << armPose.matrix() << std::endl;
+
+		m_Manip.setControlMode(END_EFFECTOR);
+		m_Manip.setAngleMode(QUATERNION);
 		m_Manip.setPose(armPose, req.ArmIndex);
 		m_Manip.sendCommand();
+		//std::cerr << armPose.matrix() << std::endl;
 			res.Success = response;
+		return response;
 	}
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)

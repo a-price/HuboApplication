@@ -14,6 +14,7 @@
 #include <tf/transform_listener.h>
 
 #include <sensor_msgs/JointState.h>
+#include <eigen_conversions/eigen_msg.h>
 
 #include <Eigen/Core>
 
@@ -68,12 +69,26 @@ public:
 	
 	void callPoseService(int seed)
 	{
-		geometry_msgs::Pose pose;
-		int side = 0;
-		/*  */
+		//geometry_msgs::Pose gPose;
+		Eigen::Isometry3d ePose;
+		int side = 0; //RIGHT
+		/* 
+		ePose.matrix() <<  0.707107,  -0.707107,   0,   0.306216,
+				                  0,          0,  -1,  -0.214500,
+				           0.707107,   0.707107,   0,   0.074576,
+				                  0,          0,   0,          1;
+		*/
+		ePose.matrix() <<  1,  0,   0,   0.306216,
+				           0,  1,   0,  -0.214500+((cos(seed/20.0)+0.0)/20.0),
+				           0,  0,   1,  -0.074576,
+				           0,  0,   0,          1;
+
 		HuboApplication::SetHuboArmPose srv;
-		srv.request.Target = pose;
+		tf::poseEigenToMsg(ePose, srv.request.Target);
+		//srv.request.Target = pose;
 		srv.request.ArmIndex = side;
+
+		//ROS_INFO("Pose: %f,%f,%f",srv.request.Target.position.x,srv.request.Target.position.y,srv.request.Target.position.z);
 		if (m_PoseClient.call(srv))
 		{
 			ROS_INFO("Service returned %i.", srv.response.Success);
@@ -105,7 +120,8 @@ int main(int argc, char** argv)
 	while (ros::ok())
 	{
 //		hi.publishSample(count);
-		hi.callJointService(count);
+		//hi.callJointService(count);
+		hi.callPoseService(count);
 		
 		ros::spinOnce();
 

@@ -6,6 +6,7 @@
  */
 
 #include "HuboApplication/HuboManipulator.h"
+#include <iostream>
 
 
 HuboManipulator::HuboManipulator(std::string chanName)
@@ -117,6 +118,7 @@ void HuboManipulator::homeJoint(int jointIndex, bool immediate)
 void HuboManipulator::sendCommand()
 {
 	ach_status_t s = ach_put(&mAchChan, &mInstruction, sizeof(mInstruction));
+	//std::cerr << mInstruction.targetPoseRight.x << "," << mInstruction.targetPoseRight.y << "," << mInstruction.targetPoseRight.z << std::endl;
 	clearInstructionData();
 }
 
@@ -132,4 +134,5 @@ void HuboManipulator::clearInstructionData()
 	memset(&mInstruction.targetJoints, 0, sizeof(mInstruction.targetJoints));
 	memset(&mInstruction.targetPoseLeft, 0, sizeof(mInstruction.targetPoseLeft));
 	memset(&mInstruction.targetPoseRight, 0, sizeof(mInstruction.targetPoseRight));
+	//std::cerr << "Cleared.\n";
 }
