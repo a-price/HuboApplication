@@ -70,20 +70,20 @@ public:
 			if (it == HUBO_JOINT_NAME_TO_INDEX.end())
 			{
 				ROS_ERROR("Joint name '%s' is unknown.", joints.name[i].c_str());
-                		response = false;
+						response = false;
 			}
-            		else
-            		{
-            			m_Manip.setJoint(it->second,joints.position[i]);
-            		}
-        	}
+					else
+					{
+						m_Manip.setJoint(it->second,joints.position[i]);
+					}
+			}
 
-        	m_Manip.sendCommand();
-        	res.Success = response;
+			m_Manip.sendCommand();
+			res.Success = response;
 	}
 	
 	bool srvSetHuboArmPose(HuboApplication::SetHuboArmPose::Request &req,
-	                       HuboApplication::SetHuboArmPose::Response &res)
+						   HuboApplication::SetHuboArmPose::Response &res)
 	{
 		bool response = true;
 		Eigen::Affine3d tempPose;
@@ -95,7 +95,7 @@ public:
 		armPose.linear() = tempPose.rotation();
 		m_Manip.setPose(armPose, req.ArmIndex);
 		m_Manip.sendCommand();
-        	res.Success = response;
+			res.Success = response;
 	}
 
 	void jointCmdCallback(const sensor_msgs::JointStateConstPtr& joints)
