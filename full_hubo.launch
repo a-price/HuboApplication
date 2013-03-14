@@ -9,6 +9,8 @@
 	<node name="test_ros_hubo_interface" pkg="HuboApplication" type="test_ros_hubo_interface" />
 
 	<!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /-->
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+		<remap from="/joint_states" to="/hubo/joint_states"/>
+	</node>
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find hubo_urdf)/urdf.vcg" />
 </launch>

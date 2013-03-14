@@ -29,7 +29,7 @@
 #include <message_filters/sync_policies/approximate_time.h>
 
 // OpenCV includes
-#include <opencv2/imgproc/imgproc.hpp>     //make sure to include the relevant headerfiles
+#include <opencv2/imgproc/imgproc.hpp>     //make sure to include the relevant header files
 #include <opencv2/highgui/highgui.hpp>
 
 // PCL includes
@@ -46,7 +46,7 @@ class SimpleKinectTracker
 public:
 	SimpleKinectTracker()
 		: visual_sub_ (nh_, "/camera/rgb/image_rect_color", 1),
-		  depth_sub_ (nh_, "/camera/depth/image", 1),
+		  depth_sub_ (nh_, "/camera/depth_registered/image_rect", 1),
 		  cloud_sub_ (nh_, "/camera/depth/points", 1),
 		  sync_(KinectSyncPolicy(1), visual_sub_, depth_sub_, cloud_sub_)
 	{
@@ -94,9 +94,10 @@ public:
 	SimpleROSTracker()
 		: it_(nh_)
 	{
-		image_sub_ = it_.subscribe("/camera/color/image", 1, &SimpleROSTracker::imageCb, this);
+		image_sub_ = it_.subscribe("/camera/rgb/image_rect_color", 1, &SimpleROSTracker::imageCb, this);
 		image_pub_= it_.advertise("/camera/tracked",1);
 		pub = nh_.advertise<geometry_msgs::Point>("/CoM",1);
+		ROS_INFO("Initialized.");
 	}
 
 	~SimpleROSTracker()
@@ -108,6 +109,7 @@ public:
 
 	void imageCb(const sensor_msgs::ImageConstPtr& msg)
 	{
+		ROS_INFO("Callback.");
 		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(msg, "bgr8");
 		
 		cv::Point CoM = tracker.getCoM(imgPtr->image);
@@ -116,7 +118,11 @@ public:
 
 		image_pub_.publish(imgPtr->toImageMsg());
 
-		//pub.publish(geometry_msgs::Point(CoM.x, CoM.y, 0));
+		geometry_msgs::Point gcom;
+		gcom.x = CoM.x;
+		gcom.y = CoM.y;
+		gcom.z = 0;
+		pub.publish(gcom);
 	}
 };
 
@@ -124,8 +130,8 @@ int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "simple_tracker");
 
-	//SimpleROSTracker st;
-	SimpleKinectTracker skt;
+	SimpleROSTracker st;
+	//SimpleKinectTracker skt;
 
 	ros::spin();
 
