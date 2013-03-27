@@ -13,11 +13,13 @@
 #include <string>
 
 #include <std_msgs/String.h>
+#include <tf/transform_broadcaster.h>
 #include <sensor_msgs/JointState.h>
 #include <eigen_conversions/eigen_msg.h>
 
 #include <Eigen/Core>
 
+#include "HuboApplication/tf_eigen.h"
 #include "HuboApplication/HuboManipulator.h"
 #include "HuboApplication/HuboStateROS.h"
 #include "HuboApplication/SetHuboJointPositions.h"
@@ -131,12 +133,29 @@ public:
 	{
 		//ROS_INFO("Publishing State...");
 		m_JointPublisher.publish(m_HuboState.getJointState());
+
+		// Have to publish head separately, since we don't have an accurate URDF
+		// TODO: Replace with values derived from known angles + calibration
+		Eigen::Isometry3d psA, psB;
+		const double alpha = -0.523598776, beta = -1.04719755;
+		psA.translate(Eigen::Vector3d(0.09, 0.0, 0.28));
+		psA.rotate(Eigen::Quaterniond(cos(alpha/2), 0, sin(alpha/2), 0).normalized());
+		psB.translate(Eigen::Vector3d(0.10, 0.0, 0.23));
+		psB.rotate(Eigen::Quaterniond(cos(beta/2), 0, sin(beta/2), 0).normalized());
+
+		tf::Transform tfA,tfB;
+		tf::TransformEigenToTF(psA, tfA);
+		tf::TransformEigenToTF(psB, tfB);
+
+		m_TFBroad.sendTransform(tf::StampedTransform(tfA, ros::Time::now(), "/Body_Torso", "/camera_link"));
+		m_TFBroad.sendTransform(tf::StampedTransform(tfB, ros::Time::now(), "/Body_Torso", "/camera_link1"));
 	}
 
 private:
 	ros::NodeHandle nh_;
 	ros::Subscriber m_JointSubscriber;
 	ros::Publisher m_JointPublisher;
+	tf::TransformBroadcaster m_TFBroad;
 
 	ros::ServiceServer m_JointService;
 	ros::ServiceServer m_PoseService;

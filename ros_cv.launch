@@ -1,0 +1,5 @@
+<launch>
+	<node name="ros_hubo_interface" pkg="HuboApplication" type="ros_hubo_interface" />
+	<include file="$(find openni_launch)/launch/openni.launch"/>
+	<node name="ros_cv" pkg="HuboApplication" type="ros_cv" output="screen"/>
+</launch>

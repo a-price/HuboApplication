@@ -40,35 +40,63 @@
 #include "HuboApplication/ColorTracker.h"
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,sensor_msgs::Image, sensor_msgs::PointCloud2> KinectSyncPolicy;
+//typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectSyncPolicy;
+
+void colorCallbackTest(const sensor_msgs::ImageConstPtr color)
+{
+	ROS_INFO("Got a Color Image.");
+}
+void depthCallbackTest(const sensor_msgs::ImageConstPtr depth)
+{
+	ROS_INFO("Got a Depth Image.");
+}
+void cloudCallbackTest(const sensor_msgs::PointCloud2ConstPtr points)
+{
+	ROS_INFO("Got a Point Cloud.");
+}
 
 class SimpleKinectTracker
 {
 public:
 	SimpleKinectTracker()
-		: visual_sub_ (nh_, "/camera/rgb/image_rect_color", 1),
-		  depth_sub_ (nh_, "/camera/depth_registered/image_rect", 1),
-		  cloud_sub_ (nh_, "/camera/depth/points", 1),
-		  sync_(KinectSyncPolicy(1), visual_sub_, depth_sub_, cloud_sub_)
+		: visual_sub_ (nh_, "/camera/rgb/image_rect_color", 5),
+		  depth_sub_ (nh_, "/camera/depth_registered/image_rect", 5),
+		  cloud_sub_ (nh_, "/camera/depth/points", 5),
+		  sync_(KinectSyncPolicy(5), visual_sub_, depth_sub_, cloud_sub_)
+		  //sync_(KinectSyncPolicy(1), visual_sub_, depth_sub_)
 	{
 		ROS_INFO("Initialized.");
+		visual_sub_.registerCallback(boost::bind(&colorCallbackTest, _1));
+		depth_sub_.registerCallback(boost::bind(&depthCallbackTest, _1));
+		cloud_sub_.registerCallback(boost::bind(&cloudCallbackTest, _1));
 		sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2, _3));
+		//sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2));
 	}
 
 	void kinectCallback(const sensor_msgs::ImageConstPtr color, const sensor_msgs::ImageConstPtr depth, const sensor_msgs::PointCloud2ConstPtr points)
+	//void kinectCallback(const sensor_msgs::ImageConstPtr color, const sensor_msgs::ImageConstPtr depth)
 	{
-		ROS_INFO("Got sync'd frames.");
+		ROS_WARN("Got sync'd frames.\n");
 		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(color, "bgr8");
 		
 		cv::Point CoM = tracker.getCoM(imgPtr->image);
 
-		pcl::PointCloud<pcl::PointXYZRGB> pCloud;
-		pcl::fromROSMsg(*points, pCloud);
-		ROS_INFO("Cloud Size: %i x %i\n", CoM.x, CoM.y);
-		pcl::PointXYZRGB target = pCloud.points[CoM.x + CoM.y * pCloud.width];
+		//pcl::PointCloud<pcl::PointXYZRGB> pCloud;
+		//pcl::PointCloud<pcl::PointXYZ> pCloud; // no color in this topic?
+		//pcl::fromROSMsg(*points, pCloud);
+		//ROS_INFO("Cloud Size: %i x %i", pCloud.height, pCloud.width);
+		//pcl::PointXYZRGB target = pCloud.points[CoM.x + CoM.y * pCloud.width];
+		//pcl::PointXYZ target = pCloud.points[CoM.x + CoM.y * pCloud.width];
 
 		// Get body to camera tf
-		ROS_INFO("Target Point: <%f,%f,%f>\n", target.x, target.y, target.z);
+		//ROS_INFO("Target Point: ( %i , %i )", CoM.x, CoM.y);
+		//ROS_INFO("Target Point: <%f,%f,%f>\n", target.x, target.y, target.z);
 	}
+
+	//void colorCallbackTest(const sensor_msgs::ImageConstPtr color)
+	//{
+	//	ROS_INFO("Got a Color Image.");
+	//}
 private:
 	ros::NodeHandle nh_;
 	message_filters::Subscriber<sensor_msgs::Image> visual_sub_ ;
@@ -109,7 +137,7 @@ public:
 
 	void imageCb(const sensor_msgs::ImageConstPtr& msg)
 	{
-		ROS_INFO("Callback.");
+		ROS_ERROR("Callback.");
 		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(msg, "bgr8");
 		
 		cv::Point CoM = tracker.getCoM(imgPtr->image);
@@ -128,10 +156,11 @@ public:
 
 int main(int argc, char** argv)
 {
+	ROS_INFO("Tracker Started.");
 	ros::init(argc, argv, "simple_tracker");
 
-	SimpleROSTracker st;
-	//SimpleKinectTracker skt;
+	//SimpleROSTracker st;
+	SimpleKinectTracker skt;
 
 	ros::spin();
 
