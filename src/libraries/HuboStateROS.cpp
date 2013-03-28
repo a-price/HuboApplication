@@ -30,8 +30,27 @@ ach_status HuboStateROS::updateState()
 	ach_status r = ACH_OK;
 	size_t fs;
 	r = ach_get( &mAchChan, &mHuboState, sizeof(mHuboState), &fs, NULL, ACH_O_LAST );
-	//if( r == ACH_OK )
-	//	ros::ROS_ASSERT( sizeof(mHuboState) == fs, __LINE__ );
+	if (r == ACH_STALE_FRAMES)
+	{
+		fprintf(stderr, "\nState channel '%s', stale: (%d) %s\n",
+            mAchChanName.c_str(), r, ach_result_to_string((ach_status_t)r));
+		if( sizeof(mHuboState) != fs, __LINE__ )
+		{
+			fprintf(stderr, "\nState channel '%s', size failed: (%d) %s\tExpected: %i, Got %i\n",
+				mAchChanName.c_str(), r, ach_result_to_string((ach_status_t)r),
+				sizeof(mHuboState), fs);
+		}
+	}
+
+	if( r == ACH_OK )
+	{
+		if( sizeof(mHuboState) != fs, __LINE__ )
+		{
+			fprintf(stderr, "\nState channel '%s', size failed: (%d) %s\tExpected: %i, Got %i\n",
+				mAchChanName.c_str(), r, ach_result_to_string((ach_status_t)r),
+				sizeof(mHuboState), fs);
+		}
+	}
 	return r;
 }
 
@@ -55,10 +74,13 @@ sensor_msgs::JointState HuboStateROS::getJointState(bool update)
 
 	for (int i = 0; i < HUBO_JOINT_COUNT; i++)
 	{
+		fprintf(stderr, " %f,", mHuboState.joint[i].pos);
+
 		js.position.push_back(mHuboState.joint[i].pos);
 		js.velocity.push_back(mHuboState.joint[i].vel);
 		js.name.push_back(HUBO_URDF_JOINT_NAMES[i]);
 	}
+	fprintf(stderr, " \n");
 
 	// How is hubo time specified?
 	js.header.stamp = ros::Time::now(); // (mHuboState.time);

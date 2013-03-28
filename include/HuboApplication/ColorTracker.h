@@ -29,7 +29,7 @@ public:
 	/// Detect colored blobs
 	cv::Mat thresholdImage(cv::Mat target);
 
-	/// Threshold the image, erode and dilate it, and compute the central moment
+	/// Threshold the image, erode and dilate it, and compute the central moment. Returns (-1,-1) if no color found.
 	cv::Point getCoM(cv::Mat target);
 
 	/// Set new tracking parameters

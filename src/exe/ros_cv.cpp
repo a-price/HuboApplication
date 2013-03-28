@@ -27,6 +27,9 @@
 #include <message_filters/synchronizer.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
+#include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
+#include <eigen_conversions/eigen_msg.h>
 
 // OpenCV includes
 #include <opencv2/imgproc/imgproc.hpp>     //make sure to include the relevant header files
@@ -38,6 +41,9 @@
 #include <pcl/point_types.h>
 
 #include "HuboApplication/ColorTracker.h"
+#include "HuboApplication/tf_eigen.h"
+
+#include "HuboApplication/SetHuboArmPose.h"
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,sensor_msgs::Image, sensor_msgs::PointCloud2> KinectSyncPolicy;
 //typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectSyncPolicy;
@@ -59,10 +65,10 @@ class SimpleKinectTracker
 {
 public:
 	SimpleKinectTracker()
-		: visual_sub_ (nh_, "/camera/rgb/image_rect_color", 5),
-		  depth_sub_ (nh_, "/camera/depth_registered/image_rect", 5),
-		  cloud_sub_ (nh_, "/camera/depth/points", 5),
-		  sync_(KinectSyncPolicy(5), visual_sub_, depth_sub_, cloud_sub_)
+		: visual_sub_ (nh_, "/camera/rgb/image_rect_color", 8),
+		  depth_sub_ (nh_, "/camera/depth_registered/image_rect", 8),
+		  cloud_sub_ (nh_, "/camera/depth/points", 8),
+		  sync_(KinectSyncPolicy(8), visual_sub_, depth_sub_, cloud_sub_)
 		  //sync_(KinectSyncPolicy(1), visual_sub_, depth_sub_)
 	{
 		ROS_INFO("Initialized.");
@@ -70,6 +76,8 @@ public:
 		depth_sub_.registerCallback(boost::bind(&depthCallbackTest, _1));
 		cloud_sub_.registerCallback(boost::bind(&cloudCallbackTest, _1));
 		sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2, _3));
+
+		pose_client_ = nh_.serviceClient<HuboApplication::SetHuboArmPose>("/hubo/set_arm");
 		//sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2));
 	}
 
@@ -80,29 +88,84 @@ public:
 		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(color, "bgr8");
 		
 		cv::Point CoM = tracker.getCoM(imgPtr->image);
+		if (CoM.x == -1) {return;} // No color found
 
-		//pcl::PointCloud<pcl::PointXYZRGB> pCloud;
-		//pcl::PointCloud<pcl::PointXYZ> pCloud; // no color in this topic?
-		//pcl::fromROSMsg(*points, pCloud);
-		//ROS_INFO("Cloud Size: %i x %i", pCloud.height, pCloud.width);
-		//pcl::PointXYZRGB target = pCloud.points[CoM.x + CoM.y * pCloud.width];
-		//pcl::PointXYZ target = pCloud.points[CoM.x + CoM.y * pCloud.width];
+		pcl::PointCloud<pcl::PointXYZ> pCloud; // no color in this topic?
+		pcl::fromROSMsg(*points, pCloud);
+		ROS_INFO("Cloud Size: %i x %i", pCloud.height, pCloud.width);
+		pcl::PointXYZ target = pCloud.points[CoM.x + CoM.y * pCloud.width];
 
 		// Get body to camera tf
-		//ROS_INFO("Target Point: ( %i , %i )", CoM.x, CoM.y);
-		//ROS_INFO("Target Point: <%f,%f,%f>\n", target.x, target.y, target.z);
+		ROS_INFO("Target Point: ( %i , %i )", CoM.x, CoM.y);
+		ROS_INFO("Target Point: <%f,%f,%f>\n", target.x, target.y, target.z);
+
+		Eigen::Vector3f eTarget = target.getVector3fMap();
+		ROS_INFO("Eigen Point: <%f,%f,%f>\n", eTarget.x(), eTarget.y(), eTarget.z());
+
+		// get object pose in camera frame
+		Eigen::Isometry3d eHeadObject = Eigen::Isometry3d::Identity();
+		eHeadObject.translate(eTarget.cast<double>());
+
+		tf::StampedTransform tHeadObject;
+		tf::TransformEigenToTF(eHeadObject, tHeadObject);
+		tf_broad_.sendTransform(tf::StampedTransform(tHeadObject, ros::Time::now(), "/camera_depth_optical_frame", "/target_object"));
+
+
+		// Get pose in body frame, grab it. eventually in a different node
+		tf::StampedTransform tTorsoObject, tTorsoHead;
+		Eigen::Isometry3d eTorsoObject, eTorsoHead;
+		HuboApplication::SetHuboArmPose srv;
+		try
+		{
+			//listener_.lookupTransform("/Body_Torso", "/target_object", ros::Time(0), tTorsoObject);
+			listener_.lookupTransform("/Body_Torso", "/camera_depth_optical_frame", ros::Time(0), tTorsoHead);
+			tf::TransformTFToEigen(tTorsoHead, eTorsoHead);
+			tf::TransformTFToEigen(tHeadObject, eHeadObject);
+
+			eTorsoObject = eTorsoHead * eHeadObject;
+			eTorsoObject.matrix().topLeftCorner<3,3>() = Eigen::Matrix3d::Identity();
+
+			tf::TransformEigenToTF(eTorsoObject, tTorsoObject);
+
+			tf::poseTFToMsg(tTorsoObject, srv.request.Target);
+			srv.request.ArmIndex = 0;
+			pose_client_.call(srv);
+		}
+		catch(tf::TransformException ex)
+		{
+			ROS_ERROR("%s", ex.what());
+		}
+
+		/*
+		// convert to body frame
+		tf::StampedTransform tHeadTorso, tTorsoObject;
+		Eigen::Isometry3d eHeadTorso, ePose;
+		listener_.lookupTransform("/camera_link", "/Body_Torso", ros::Time(0), tHeadTorso);
+		tf::TransformTFToEigen(tHeadTorso, eHeadTorso);
+		std::cerr << eHeadTorso.matrix() << std::endl;
+
+		eTarget = eHeadTorso.cast<float>() * eTarget;
+		ROS_INFO("Transformed Point: <%f,%f,%f>\n", eTarget.x(), eTarget.y(), eTarget.z());
+		ePose = Eigen::Isometry3d::Identity();
+		ePose.translate(eTarget.cast<double>());
+
+		HuboApplication::SetHuboArmPose srv;
+        tf::poseEigenToMsg(ePose, srv.request.Target);
+		srv.request.ArmIndex = 0;
+		pose_client_.call(srv);
+		*/
+
 	}
 
-	//void colorCallbackTest(const sensor_msgs::ImageConstPtr color)
-	//{
-	//	ROS_INFO("Got a Color Image.");
-	//}
 private:
 	ros::NodeHandle nh_;
 	message_filters::Subscriber<sensor_msgs::Image> visual_sub_ ;
 	message_filters::Subscriber<sensor_msgs::Image> depth_sub_;
 	message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub_;
 	message_filters::Synchronizer<KinectSyncPolicy> sync_;
+	tf::TransformListener listener_;
+	tf::TransformBroadcaster tf_broad_;
+	ros::ServiceClient pose_client_;
 
 	ColorTracker tracker;
 };

@@ -31,6 +31,7 @@ public:
 	ROSHubo()
 	{
 		// Set up hubo
+		/*
 		m_Manip.homeJoints();
 		m_Manip.sendCommand();
 		usleep(2000000);
@@ -51,6 +52,7 @@ public:
 			m_Manip.sendCommand();
 			usleep(2000000);
 		}
+		*/
 
 		//m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
 		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/joint_states", 1);
@@ -93,6 +95,12 @@ public:
 		Eigen::Isometry3d armPose;
 
 		tf::poseMsgToEigen(req.Target, tempPose);
+		if (tempPose(0,3) != tempPose(0,3)) // null check
+		{
+			res.Success = false;
+			return false;
+		}
+
 		//std::cerr << tempPose.matrix() << std::endl;
 
 		armPose = tempPose.matrix();
@@ -132,16 +140,30 @@ public:
 	void publishState()
 	{
 		//ROS_INFO("Publishing State...");
-		m_JointPublisher.publish(m_HuboState.getJointState());
+		hubo_state temp = m_HuboState.getState(true);
+		for (int i = 0; i < HUBO_JOINT_COUNT; i++)
+		{
+			std::cout << "class get " << i << ": " << temp.joint[i].pos << std::endl;
+		}
+
+		m_JointPublisher.publish(m_HuboState.getJointState(true));
 
 		// Have to publish head separately, since we don't have an accurate URDF
 		// TODO: Replace with values derived from known angles + calibration
 		Eigen::Isometry3d psA, psB;
-		const double alpha = -0.523598776, beta = -1.04719755;
+		psA = Eigen::Isometry3d::Identity();
+		psB = Eigen::Isometry3d::Identity();
+
+		//const double alpha = 0.523598776, beta = 1.04719755;
+		const double alpha = 0.86602540378, beta = 1.04719755;
 		psA.translate(Eigen::Vector3d(0.09, 0.0, 0.28));
 		psA.rotate(Eigen::Quaterniond(cos(alpha/2), 0, sin(alpha/2), 0).normalized());
+		//psA.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
+		//psA.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
 		psB.translate(Eigen::Vector3d(0.10, 0.0, 0.23));
 		psB.rotate(Eigen::Quaterniond(cos(beta/2), 0, sin(beta/2), 0).normalized());
+		//psB.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
+		//psB.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
 
 		tf::Transform tfA,tfB;
 		tf::TransformEigenToTF(psA, tfA);

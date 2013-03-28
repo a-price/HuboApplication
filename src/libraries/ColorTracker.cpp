@@ -85,9 +85,11 @@ cv::Point ColorTracker::getCoM(cv::Mat target)
 	double moment10 = moments.m10;
 	double moment01 = moments.m01;
 	double area = moments.m00;
+
+	// If no color detected, return an invalid index
 	if (area == 0)
 	{
-		area = 1;
+		return cv::Point(-1, -1);
 	}
 
 	// Holding the last and current ball positions

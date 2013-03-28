@@ -1,0 +1,14 @@
+<launch>
+	<param name="robot_description" textfile="$(find hubo_urdf)/huboplus.urdf" />
+	<param name="object1" textfile="$(find HuboApplication)/launch/target.urdf" />
+
+	<node name="ros_hubo_interface" pkg="HuboApplication" type="ros_hubo_interface" />
+	<include file="$(find openni_launch)/launch/openni.launch"/>
+	<node name="ros_cv" pkg="HuboApplication" type="ros_cv" output="screen"/>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+        <remap from="/joint_states" to="/hubo/joint_states"/>
+    </node>
+
+	<!-- move the vcg to our project -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find HuboApplication)/launch/hubo.vcg" />
+</launch>
