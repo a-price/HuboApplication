@@ -124,6 +124,9 @@ public:
 
 			eTorsoObject = eTorsoHead * eHeadObject;
 			eTorsoObject.matrix().topLeftCorner<3,3>() = Eigen::Matrix3d::Identity();
+			//eTorsoObject.translate(Eigen::Vector3d(0,0.4,0)); // for testing...
+			eTorsoObject.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitX()));
+			eTorsoObject.rotate(Eigen::AngleAxisd(-M_PI/6, Eigen::Vector3d::UnitY()));
 
 			tf::TransformEigenToTF(eTorsoObject, tTorsoObject);
 

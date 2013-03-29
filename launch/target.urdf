@@ -3,7 +3,7 @@
   <link name="target_object">
     <visual>
       <geometry>
-        <sphere radius="0.1"/>
+        <sphere radius="0.025"/>
       </geometry>
       <material name="green">
             <color rgba="1 0 0 1"/>

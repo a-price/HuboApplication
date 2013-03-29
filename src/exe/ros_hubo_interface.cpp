@@ -155,7 +155,7 @@ public:
 		psB = Eigen::Isometry3d::Identity();
 
 		//const double alpha = 0.523598776, beta = 1.04719755;
-		const double alpha = 0.86602540378, beta = 1.04719755;
+		const double alpha = 1.0, beta = 1.04719755;//0.86602540378, beta = 1.04719755;
 		psA.translate(Eigen::Vector3d(0.09, 0.0, 0.28));
 		psA.rotate(Eigen::Quaterniond(cos(alpha/2), 0, sin(alpha/2), 0).normalized());
 		//psA.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
