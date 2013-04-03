@@ -78,22 +78,30 @@ file(COPY ${resource_source} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 
 # Build library
 add_library(${PROJECT_NAME} SHARED ${lib_source})
-#target_link_libraries(${PROJECT_NAME} freenect) 
 
 enable_testing()
 
-# Build unit tests
-message(STATUS "\n-- UNIT TESTS: ")
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+# Build all tests
+message(STATUS "\n-- FULL TESTS: ")
 foreach(test_src_file ${tests_source})
     get_filename_component(test_base ${test_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}" )
     add_executable(${test_base} ${test_src_file} ${unit_tests_source})
     target_link_libraries(${test_base} ${PROJECT_NAME})
+endforeach(test_src_file)
+
+# Build unit tests
+message(STATUS "\n-- UNIT TESTS: ")
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+foreach(utest_src_file ${unit_tests_source})
+    get_filename_component(test_base ${utest_src_file} NAME_WE)
+    message(STATUS "Adding test ${test_base}" )
+    add_executable(${test_base} "src/tests/test_units.cpp" ${utest_src_file})
+    target_link_libraries(${test_base} ${PROJECT_NAME})
     add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
     add_dependencies(check ${test_base})
-endforeach(test_src_file)
+endforeach(utest_src_file)
 
 # Build system tests
 message(STATUS "\n-- SYSTEM TESTS: ")
