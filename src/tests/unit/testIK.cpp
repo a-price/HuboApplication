@@ -8,20 +8,18 @@ double compareT(Eigen::Isometry3d a,Eigen::Isometry3d b,Eigen::VectorXd weight)
 	Eigen::Vector3d pa=a.translation();
 	Eigen::Vector3d pb=b.translation();
 	Eigen::VectorXd va(7),vb(7),verr(7),vScaled(7);
-	va<<pa,qa;
-	vb<<pb,qb;
-	verr=pb-pa;
-	vScaled=weight.transpose()*Eigen::MatrixXd::Identity(7,7)*verr;
-	return vScaled.squaredNorm();
-	
-	
-
+	va<<pa,qa.x(), qa.y(), qa.z(), qa.w();
+	vb<<pb,qb.x(), qb.y(), qb.z(), qb.w();
+	verr=vb-va;
+	vScaled=weight.cwiseProduct(verr);
+	return vScaled.squaredNorm();	
 }
+
 int main(int argc, char** argv)
 {
 	Hubo_Control hubo;
 	Vector6d R1,R2,L1,L2,Rc,Lc; //vectors go here.
-	Eigen::Isometry3d I = Eigen::Isometry3d::Identity();
+	Eigen::Isometry3d ident = Eigen::Isometry3d::Identity();
 	hubo.getArmAngles(RIGHT, Rc);//double this for left
 	hubo.getArmAngles(LEFT, Lc);
 	Eigen::Isometry3d Rin,Lin,Rout,Lout;
@@ -52,7 +50,6 @@ int main(int argc, char** argv)
 		hubo.huboArmIK(R2,Rin,Rc,RIGHT);
 		hubo.huboArmIK(L2,Lin,Lc,LEFT);//R1 starts out
 		//IK takes in a desited pose and outputs joint angles
-		
 
 	}
 	hubo.huboArmFK(Rout,R1,RIGHT);
@@ -64,7 +61,6 @@ int main(int argc, char** argv)
 	//compare [333555]
 	//quality(F,F')
 	std::cout <<"Left "<< Left << " Right "<< Right<<std::endl;
-	
 	
 }
 
