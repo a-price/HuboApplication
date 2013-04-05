@@ -20,9 +20,9 @@
 class TestModelMatcher : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE( TestModelMatcher );
-	CPPUNIT_TEST(TestHistogram);
-	//CPPUNIT_TEST(TestModelMatcherMain);
-	//CPPUNIT_TEST(TestModelMatcherPCD);
+	CPPUNIT_TEST(TestVectorHistogram);
+	CPPUNIT_TEST(TestModelMatcherMain);
+	CPPUNIT_TEST(TestModelMatcherPCD);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -69,6 +69,7 @@ public:
 	void TestModelMatcherPCD()
 	{
 		std::cerr << "Starting file test.\n";
+
 		pcl::PointCloud<pcl::PointXYZ>::Ptr test(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::io::loadPCDFile <pcl::PointXYZ>(directory + "ism_train_cat.pcd", *test);
 		std::cerr << "Getting model parameters for test file.\n";
@@ -79,7 +80,7 @@ public:
 		std::cerr << "Exiting file test.\n";
 	}
 
-	void TestHistogram()
+	void TestVectorHistogram()
 	{
 		Eigen::VectorXf temp(10);
 		for (int i = 0; i < temp.rows(); i++)
@@ -87,7 +88,7 @@ public:
 			temp(i) = i;
 		}
 
-		Eigen::VectorXi hist = mm.Histogram(temp, 10);
+		Eigen::VectorXi hist = mm.VectorHistogram(temp, 10);
 		std::stringstream ss;
 		ss << hist.transpose() << std::endl;
 		ss << "Original: " << temp.transpose();
