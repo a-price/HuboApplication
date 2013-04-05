@@ -70,11 +70,9 @@ Eigen::VectorXi ModelMatcher::VectorHistogram(const Eigen::VectorXf input, const
 
 }
 
-std::vector<int> ModelMatcher::GetClosestModels(Eigen::VectorXf search, size_t numModels)
+std::vector<std::pair<int, double> > ModelMatcher::GetClosestModelsCoarse(Eigen::VectorXf search)
 {
-	std::vector<int> closest;
 	std::vector<std::pair<int, double> > scores;
-	closest.push_back(1);
 	for (int i = 0; i < modelDescriptors.size(); i++)
 	{
 		std::pair<int, double> score(i, descriptorSimilarity(search, modelDescriptors[i]));
@@ -82,11 +80,38 @@ std::vector<int> ModelMatcher::GetClosestModels(Eigen::VectorXf search, size_t n
 	}
 	std::sort(scores.begin(), scores.end(), this->scoreCompare);
 
-	for (int i = 0; i < std::min(numModels, modelDescriptors.size()); i++)
-	{
+	return scores;
+}
 
+std::vector<std::pair<int, double> > ModelMatcher::GetClosestModelsFine(pcl::PointCloud<pcl::PointXYZ>& search, std::vector<int> modelIndices)
+{
+	std::vector<std::pair<int, double> > scores;
+
+	pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+	//std::cerr << "Points1: " << search.points.size() << std::endl;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cptr = pcl::PointCloud<pcl::PointXYZ>::Ptr(&search);
+	//std::cerr << "Points2: " << cptr->points.size() << std::endl;
+	icp.setInputCloud(cptr);
+	//std::cerr << "Points3: " << cptr->points.size() << std::endl;
+	for (size_t i = 0; i < modelIndices.size(); i++)
+	{
+		std::cerr << "Hello." << std::endl;
+		pcl::PointCloud<pcl::PointXYZ>::Ptr referenceCloud;
+		//std::cerr << "Points4: " << referenceCloud->points.size() << std::endl;
+		GetDatabaseCloud(modelIndices[i], referenceCloud);
+		//std::cerr << "Points5: " << referenceCloud->points.size() << std::endl;
+		icp.setInputTarget(referenceCloud);
+		pcl::PointCloud<pcl::PointXYZ> Final;
+		icp.align(Final);
+		std::cout << "has converged:" << icp.hasConverged() << " score: " <<
+		icp.getFitnessScore() << std::endl;
+		std::cout << icp.getFinalTransformation() << std::endl;
+
+		scores.push_back(std::pair<int, double>(modelIndices[i], icp.getFitnessScore()));
 	}
-	return closest;
+	std::sort(scores.begin(), scores.end(), this->scoreCompare);
+
+	return scores;
 }
 
 void ModelMatcher::LoadModelFiles(std::string directory, std::vector<std::string> files)
@@ -95,18 +120,23 @@ void ModelMatcher::LoadModelFiles(std::string directory, std::vector<std::string
 	modelFiles = files;
 	for (int i = 0; i < files.size(); i++)
 	{
-		pcl::PointCloud<pcl::PointXYZ> cloud;
-		pcl::io::loadPCDFile <pcl::PointXYZ>(modelDirectory + modelFiles[i], cloud);
-		//modelClouds.push_back(cloud);
+		pcl::PointCloud<pcl::PointXYZ> ::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+		pcl::io::loadPCDFile <pcl::PointXYZ>(modelDirectory + modelFiles[i], *cloud);
+		modelClouds.push_back(cloud);
+		std::cerr << "Model DB Size: " << modelClouds.size() << std::endl;
 
-		Eigen::VectorXf descriptor = ComputeModelParameters(cloud);
+		Eigen::VectorXf descriptor = ComputeModelParameters(*cloud);
 		modelDescriptors.push_back(descriptor);
 	}
 }
 
-void ModelMatcher::GetDatabaseCloud(int index, pcl::PointCloud<pcl::PointXYZ>& cloud)
+void ModelMatcher::GetDatabaseCloud(int index, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud)
 {
-	pcl::io::loadPCDFile <pcl::PointXYZ>(modelDirectory + modelFiles[index], cloud);
+	//pcl::io::loadPCDFile <pcl::PointXYZ>(modelDirectory + modelFiles[index], cloud);
+	if (index >= 0 && index < modelClouds.size())
+	{
+		cloud = modelClouds[index];
+	}
 }
 
 
