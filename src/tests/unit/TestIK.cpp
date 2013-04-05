@@ -13,7 +13,6 @@
 #include "HuboKin.h"
 
 typedef Eigen::Matrix< double, 6, 1 > Vector6d;
-//#include <Hubo_Control.h>
 
 /**
  * \class TestIK
@@ -29,7 +28,7 @@ public:
 
 	/**
 	 * \fn setUp
-	 * \brief Initializes test context for following unit tests for Fastrak class.
+	 * \brief Initializes test context for following unit tests for HuboKin class.
 	 */
 	void setUp()
 	{
@@ -38,7 +37,7 @@ public:
 
 	/**
 	 * \fn tearDown
-	 * \brief Cleans up test context for unit tests for Fastrak class.
+	 * \brief Cleans up test context for unit tests for HuboKin class.
 	 */
 	void tearDown()
 	{

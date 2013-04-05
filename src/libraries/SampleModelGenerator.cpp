@@ -44,9 +44,9 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr SampleModelGenerator::GenerateSamplePlane(co
 {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-	for (float x = -r; x <= r; x++)
+	for (float x = -r; x <= r; x+=rRes)
 	{
-		for (float y = -r; y <= r; y++)
+		for (float y = -r; y <= r; y+=rRes)
 		{
 			pcl::PointXYZ point;
 			point.x = x;
