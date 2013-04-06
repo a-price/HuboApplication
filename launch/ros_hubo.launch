@@ -1,5 +1,9 @@
 <launch>
+	<arg name="model" default="huboplus.urdf" />
+
+	<param name="robot_description" textfile="$(find hubo_urdf)/$(arg model)" />
 	<node name="ros_hubo_interface" pkg="HuboApplication" type="ros_hubo_interface" />
-	<node name="test_ros_hubo_interface" pkg="HuboApplication" type="test_ros_hubo_interface" output="screen"/>
-	<!--node name="rviz" pkg="rviz" type="rviz" args="-d $(find HuboApplication)/fastrak.vcg" /-->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" >
+                <remap from="/joint_states" to="/hubo/joint_states"/>
+        </node>
 </launch>
