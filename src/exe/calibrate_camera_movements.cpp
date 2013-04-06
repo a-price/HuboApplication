@@ -9,14 +9,16 @@
 
 #include "HuboApplication/SetHuboArmPose.h"
 #include "HuboApplication/tf_eigen.h"
+#include "../../include/Collision_Checker.h"
+
 
 const int NUM_CALIBRATION_POSES = 15;
-const int X_MIN =  0.1;
-const int X_MAX =  0.3;
-const int Y_MIN =  0.25;
-const int Y_MAX = -0.25;
-const int Z_MIN = -0.25;
-const int Z_MAX =  0.1;
+const double X_MIN =  0.1;
+const double X_MAX =  0.3;
+const double Y_MIN =  0.25;
+const double Y_MAX = -0.25;
+const double Z_MIN = -0.25;
+const double Z_MAX =  0.1;
 
 double randbetween(double min, double max)
 {
@@ -35,26 +37,29 @@ int main(int argc, char** argv)
 
 	while (ros::ok())
 	{
-		double x = randbetween(X_MIN, X_MAX);
+		/*double x = randbetween(X_MIN, X_MAX);
 		double y = randbetween(Y_MIN, Y_MAX);
-		double z = randbetween(Z_MIN, Z_MAX);
+		double z = randbetween(Z_MIN, Z_MAX);*/
 
 		Eigen::Isometry3d ePose;
 		tf::StampedTransform tPose;
 		HuboApplication::SetHuboArmPose srv;
 
-		ePose.matrix() <<   1,  0,  0,  x,
-							0,  1,  0,  y,
-							0,  0,  1,  z,
+		ePose.matrix() <<   1,  0,  0, .3,
+							0,  1,  0, .2,
+							0,  0,  1,  0,
 							0,  0,  0,  1;
 
-		ePose.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitX()));
-		ePose.rotate(Eigen::AngleAxisd(-M_PI/6, Eigen::Vector3d::UnitY()));
+		ePose.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
+		ePose.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
 
+		Collision_Checker cc;
+		cc.initCollisionChecker();
+		cc.checkSelfCollision(ePose);
 		tf::TransformEigenToTF(ePose, tPose);
 
 		tf::poseTFToMsg(tPose, srv.request.Target);
-		srv.request.ArmIndex = 0;
+		srv.request.ArmIndex = 1;
 		poseClient.call(srv);
 
 		ros::spinOnce();

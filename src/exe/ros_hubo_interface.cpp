@@ -204,8 +204,8 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		i = i | system("achd pull -d 192.168.1.245 \"hubo-state\"");
-		i = i | system("achd push -d 192.168.1.245 \"hubo-manip\"");
+		i = i | system("achd pull -d \"hubo-linux\" \"hubo-state\"");
+		i = i | system("achd push -d \"hubo-linux\" \"hubo-manip\"");
 
 		if (i != 0) 
 		{
