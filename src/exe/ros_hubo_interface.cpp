@@ -30,30 +30,6 @@ class ROSHubo
 public:
 	ROSHubo()
 	{
-		// Set up hubo
-		/*
-		m_Manip.homeJoints();
-		m_Manip.sendCommand();
-		usleep(2000000);
-		bool fullHome = true;
-		hubo_state s = m_HuboState.getState(true);
-		for (int i = 0; i < NUM_UPPER_BODY_JOINTS; i++)
-		{
-			bool homeSuccess = (s.status[i].homeFlag == HUBO_HOME_OK);
-			fullHome = fullHome && homeSuccess;
-			if (!homeSuccess)
-			{
-				m_Manip.homeJoint(i, false);
-				ROS_ERROR("Failed to home %i.", i);
-			}
-		}
-		if (!fullHome)
-		{
-			m_Manip.sendCommand();
-			usleep(2000000);
-		}
-		*/
-
 		//m_JointSubscriber = nh_.subscribe("/hubo/target_joints", 1, &ROSHubo::jointCmdCallback, this);
 		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/joint_states", 1);
 
@@ -189,7 +165,7 @@ private:
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "ROSHubo");
-	ROS_ERROR("Setting up Hubo Relay with userID: %i.", geteuid());
+	ROS_WARN("Setting up Hubo Relay with userID: %i.", geteuid());
 
 	// Initialize Ach channels
 	if (geteuid() == 0 && system(NULL))
