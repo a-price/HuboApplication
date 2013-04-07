@@ -34,7 +34,7 @@ find_package(PCL REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
-link_libraries(${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_REGISTRATION_LIBRARIES})
+link_libraries(${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES} ${PCL_REGISTRATION_LIBRARIES})
 
 # Include the Eigen library
 #set(EIGEN3_INCLUDE_DIR "/usr/include/eigen3")
