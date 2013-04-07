@@ -134,7 +134,7 @@ public:
 			srv.request.ArmIndex = 0;
 			pose_client_.call(srv);
 		}
-		catch(tf::TransformException ex)
+		catch(tf::TransformException& ex)
 		{
 			ROS_ERROR("%s", ex.what());
 		}

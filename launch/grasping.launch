@@ -1,0 +1,7 @@
+<launch>
+
+	<include file="$(find tabletop_object_detector)/launch/tabletop_segmentation.launch">
+        <arg name="tabletop_segmentation_points_in" value="camera/depth/points"/>
+    </include>
+
+</launch>

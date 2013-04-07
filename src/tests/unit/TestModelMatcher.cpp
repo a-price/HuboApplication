@@ -72,7 +72,10 @@ public:
 		std::cerr << "Starting file test.\n";
 
 		pcl::PointCloud<pcl::PointXYZ>::Ptr test(new pcl::PointCloud<pcl::PointXYZ>);
-		pcl::io::loadPCDFile <pcl::PointXYZ>(directory + "ism_test_lioness.pcd", *test);
+		pcl::io::loadPCDFile <pcl::PointXYZ>(directory + "ism_partial_wolf.pcd", *test);
+		Eigen::Affine3f transform = Eigen::Affine3f::Identity();
+		//transform.rotate(Eigen::AngleAxisf(-M_PI/2, Eigen::Vector3f::UnitX()));
+		//pcl::transformPointCloud(*test, *test, transform.scale(0.01));
 		std::cerr << "Getting model parameters for test file.\n";
 		Eigen::VectorXf descriptor = mm.ComputeModelParameters(*test);
 

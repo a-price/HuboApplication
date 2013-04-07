@@ -122,6 +122,8 @@ void ModelMatcher::LoadModelFiles(std::string directory, std::vector<std::string
 	{
 		pcl::PointCloud<pcl::PointXYZ> ::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::io::loadPCDFile <pcl::PointXYZ>(modelDirectory + modelFiles[i], *cloud);
+		Eigen::Affine3f transform;
+		//pcl::transformPointCloud(*cloud, *cloud, transform.scale(0.01));
 		modelClouds.push_back(cloud);
 		std::cerr << "Model DB Size: " << modelClouds.size() << std::endl;
 
