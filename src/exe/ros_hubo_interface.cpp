@@ -116,13 +116,16 @@ public:
 	void publishState()
 	{
 		//ROS_INFO("Publishing State...");
-		hubo_state temp = m_HuboState.getState(true);
-		for (int i = 0; i < HUBO_JOINT_COUNT; i++)
-		{
-			std::cout << "class get " << i << ": " << temp.joint[i].pos << std::endl;
-		}
+		sensor_msgs::JointState jState = m_HuboState.getJointState(true);
+		jState.name.push_back("HNP");
+		jState.position.push_back(0);
+		jState.velocity.push_back(0);
 
-		m_JointPublisher.publish(m_HuboState.getJointState(true));
+		jState.name.push_back("HNR");
+		jState.position.push_back(0);
+		jState.velocity.push_back(0);
+
+		m_JointPublisher.publish(jState);
 
 		// Have to publish head separately, since we don't have an accurate URDF
 		// TODO: Replace with values derived from known angles + calibration
@@ -131,12 +134,12 @@ public:
 		psB = Eigen::Isometry3d::Identity();
 
 		//const double alpha = 0.523598776, beta = 1.04719755;
-		const double alpha = 1.0, beta = 1.04719755;//0.86602540378, beta = 1.04719755;
-		psA.translate(Eigen::Vector3d(0.09, 0.0, 0.28));
+		const double alpha = 0.90, beta = 0;//0.86602540378, beta = 1.04719755;
+		psA.translate(Eigen::Vector3d(0.035, 0.0, 0.020));
 		psA.rotate(Eigen::Quaterniond(cos(alpha/2), 0, sin(alpha/2), 0).normalized());
 		//psA.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
 		//psA.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
-		psB.translate(Eigen::Vector3d(0.10, 0.0, 0.23));
+		psB.translate(Eigen::Vector3d(0.035, 0.0, 0.073));
 		psB.rotate(Eigen::Quaterniond(cos(beta/2), 0, sin(beta/2), 0).normalized());
 		//psB.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
 		//psB.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
@@ -145,8 +148,8 @@ public:
 		tf::TransformEigenToTF(psA, tfA);
 		tf::TransformEigenToTF(psB, tfB);
 
-		m_TFBroad.sendTransform(tf::StampedTransform(tfA, ros::Time::now(), "/Body_Torso", "/camera_link"));
-		m_TFBroad.sendTransform(tf::StampedTransform(tfB, ros::Time::now(), "/Body_Torso", "/camera_link1"));
+		m_TFBroad.sendTransform(tf::StampedTransform(tfA, ros::Time::now(), "/Body_HNP", "/camera_link"));
+		m_TFBroad.sendTransform(tf::StampedTransform(tfB, ros::Time::now(), "/Body_HNP", "/camera_link1"));
 	}
 
 private:

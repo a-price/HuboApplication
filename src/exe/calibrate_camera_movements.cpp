@@ -9,7 +9,7 @@
 
 #include "HuboApplication/SetHuboArmPose.h"
 #include "HuboApplication/tf_eigen.h"
-#include "../../include/Collision_Checker.h"
+#include "Collision_Checker.h"
 
 
 const int NUM_CALIBRATION_POSES = 15;
