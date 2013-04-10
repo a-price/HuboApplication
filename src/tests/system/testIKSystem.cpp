@@ -37,9 +37,9 @@ double compareT(Eigen::Isometry3d a, Eigen::Isometry3d b,
 }
 
 // TODO: consider orientations other than identity
-std::vector<reachability_t> TestReachability()
+std::vector<reachability_t> TestReachability(double rotation)
 {
-	const double XMIN = -0.1, XMAX = 0.8, YMIN = -0.6, YMAX = .2, ZMIN = -1, ZMAX =
+	const double XMIN = -0.1, XMAX = 0.7, YMIN = -0.8, YMAX = .2, ZMIN = -1, ZMAX =
 			0.3, STEPSIZE = 0.05;
 	HK::HuboKin hubo;
 	std::vector<reachability_t> results;
@@ -60,6 +60,7 @@ std::vector<reachability_t> TestReachability()
 				target.translation().x() = x;
 				target.translation().y() = y;
 				target.translation().z() = z;
+				target.rotate(Eigen::AngleAxisd(-(M_PI/6) * rotation, Eigen::Vector3d::UnitX()));
 				hubo.armIK(q, target, Vector6d::Zero(), RIGHT);
 				hubo.armFK(result, q, RIGHT);
 				double ret = compareT(target, result, weight);
@@ -99,50 +100,53 @@ int main(int argc, char* argv[])
 
 	resultPublisher = nh.advertise<visualization_msgs::MarkerArray>( "grasp_points", 0 );
 
-	visualization_msgs::MarkerArray mArray;
-
-	double maxError=0;
-	std::vector<reachability_t> results = TestReachability();
-	for (int j = 0; j < results.size(); j++)
-	{
-		reachability_t point = results[j];
-		if (point.error>maxError)maxError=point.error;
-	}
-
-	for (int i = 0; i < results.size(); i++)
-	{
-		reachability_t point = results[i];
-
-		visualization_msgs::Marker marker;
-		marker.header.frame_id = "Body_Torso";
-		//marker.header.stamp = headerTime;
-		marker.ns = "HuboApplication";
-		marker.id = i;
-		marker.type = visualization_msgs::Marker::SPHERE;
-		marker.action = visualization_msgs::Marker::ADD;
-		marker.pose.position.x = point.x;
-		marker.pose.position.y = point.y;
-		marker.pose.position.z = point.z;
-
-		marker.scale.x = 0.1*point.error/maxError;
-		marker.scale.y = 0.1*point.error/maxError;
-		marker.scale.z = 0.1*point.error/maxError;
-		marker.color.a = (1-point.error/maxError)*.70; // based on # & weight of connections
-
-		marker.color.r = point.error/maxError; // based on parent
-		marker.color.g = 1-point.error/maxError; //
-		marker.color.b = 0.0;
-		mArray.markers.push_back(marker);
-	}
-
-	ros::Rate rate(0.2);
+	ros::Rate rate(1);
+	double count;
 	while (ros::ok())
 	{
+		std::vector<reachability_t> results = TestReachability(count);
+		visualization_msgs::MarkerArray mArray;
+
+		double maxError=0;
+
+		for (int j = 0; j < results.size(); j++)
+		{
+			reachability_t point = results[j];
+			if (point.error>maxError)maxError=point.error;
+		}
+
+		for (int i = 0; i < results.size(); i++)
+		{
+			reachability_t point = results[i];
+
+			visualization_msgs::Marker marker;
+			marker.header.frame_id = "Body_Torso";
+			//marker.header.stamp = headerTime;
+			marker.ns = "HuboApplication";
+			marker.id = i;
+			marker.type = visualization_msgs::Marker::SPHERE;
+			marker.action = visualization_msgs::Marker::ADD;
+			marker.pose.position.x = point.x;
+			marker.pose.position.y = point.y;
+			marker.pose.position.z = point.z;
+
+			marker.scale.x = 0.1*point.error/maxError;
+			marker.scale.y = 0.1*point.error/maxError;
+			marker.scale.z = 0.1*point.error/maxError;
+			marker.color.a = (1-point.error/maxError)*.70; // based on # & weight of connections
+
+			marker.color.r = point.error/maxError; // based on parent
+			marker.color.g = 1-point.error/maxError; //
+			marker.color.b = 0.0;
+			mArray.markers.push_back(marker);
+		}
+
 		resultPublisher.publish(mArray);
 
 		ros::spinOnce();
 
 		rate.sleep();
+		count++;
 	}
 
 

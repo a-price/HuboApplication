@@ -10,6 +10,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
 //#include <tabletop_object_detector/TabletopSegmentation.h>
 
 #include <pcl/ros/conversions.h>
@@ -26,14 +27,16 @@
 #include <pcl/segmentation/extract_clusters.h>
 
 #include "HuboApplication/tf_eigen.h"
+#include "HuboApplication/ModelMatcher.h"
 
 ros::Subscriber cloudSub;
 ros::Publisher cloudPub;
 tf::TransformListener* tfListener;
+tf::TransformBroadcaster* tfBroadcaster;
 
 void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 {
-	ROS_INFO("Got a Point Cloud.");
+	std::cerr << "Got a Point Cloud.\n";
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr pCloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr pCloudFiltered(new pcl::PointCloud<pcl::PointXYZ>);
@@ -73,7 +76,7 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 		model_p2 (new pcl::SampleConsensusModelPlane<pcl::PointXYZ> (pCloudFiltered2));
 
 	pcl::RandomSampleConsensus<pcl::PointXYZ> ransac2 (model_p2);
-	ransac2.setDistanceThreshold (.01);
+	ransac2.setDistanceThreshold (.03);
 	ransac2.computeModel();
 	ransac2.getModelCoefficients(fitPlane); // TODO: verify that this is the table
 	ransac2.getInliers(inliers->indices);
@@ -121,6 +124,8 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 	ec.extract (cluster_indices);
 
 	std::cout << "Found " << cluster_indices.size() << " clusters.\n";
+	if (cluster_indices.size() < 1) {return;}
+	pcl::PointCloud<pcl::PointXYZ>::Ptr pSubCloud(new pcl::PointCloud<pcl::PointXYZ>);
 	for (int cluster = 0; cluster < cluster_indices.size(); cluster ++)
 	{
 		for (int i = 0; i < cluster_indices[cluster].indices.size(); i++)
@@ -136,13 +141,32 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 			pCloudColored->points.push_back(cPoint);
 		}
 	}
-	pCloudColored->header = pCloudFiltered2->header;
 
+
+	pCloudColored->header = pCloudFiltered2->header;
 	sensor_msgs::PointCloud2 filteredPoints;
 	pcl::toROSMsg(*pCloudColored, filteredPoints);
 
 	cloudPub.publish(filteredPoints);
 
+	if (cluster_indices[0].indices.size() < 50) {return;}
+
+
+	boost::shared_ptr<pcl::PointIndices> *ptrCluster = new boost::shared_ptr<pcl::PointIndices>(&cluster_indices[0]);
+	extract.setInputCloud (pCloudFiltered2);
+	extract.setIndices (*ptrCluster);
+	extract.setNegative (false);
+	extract.filter (*pSubCloud);
+	ModelMatcher mm;
+	Eigen::Isometry3f bottlePose = mm.MatchCylinderModel(pSubCloud);//.cast<double>();
+
+	tf::Transform tCyl;
+	std::cerr << "Got pose.";
+	tf::TransformEigenToTF(bottlePose.cast<double>(), tCyl);
+
+	std::cerr << "Got msg.";
+	//std::cerr << tCyl;
+	tfBroadcaster->sendTransform(tf::StampedTransform(tCyl, ros::Time::now(), "/camera_depth_optical_frame", "/cylinder"));
 
 	// switch to pc2
 
@@ -162,6 +186,7 @@ int main(int argc, char** argv)
 	cloudSub = nh.subscribe("/camera/depth/points", 2, cloudCallback);
 	cloudPub = nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 1);
 	tfListener = new tf::TransformListener;
+	tfBroadcaster = new tf::TransformBroadcaster;
 	//ros::ServiceClient tsrClient = nh.serviceClient<tabletop_object_detector::TabletopSegmentationRequest>("/hubo/set_arm");
 
 	ros::spin();

@@ -83,6 +83,56 @@ std::vector<std::pair<int, double> > ModelMatcher::GetClosestModelsCoarse(Eigen:
 	return scores;
 }
 
+Eigen::Isometry3f ModelMatcher::MatchCylinderModel(pcl::PointCloud<pcl::PointXYZ>::Ptr search)
+{
+	// Create the normal estimation class, and pass the input dataset to it
+	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+	ne.setInputCloud (search);
+
+	// Create an empty kd-tree representation, and pass it to the normal estimation object.
+	// Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
+	ne.setSearchMethod (tree);
+
+	// Output datasets
+	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals (new pcl::PointCloud<pcl::Normal>);
+
+	// Use all neighbors in a sphere of radius 3cm
+	ne.setRadiusSearch (0.03);
+
+	// Compute the features
+	ne.compute (*cloud_normals);
+
+	// cloud_normals->points.size () should have the same size as the input cloud->points.size ()*
+
+	//pcl::PointCloud<pcl::PointNormal>::Ptr search_w_normals (new pcl::PointCloud<pcl::PointNormal>);
+	//pcl::concatenateFields(*search, *cloud_normals, *search_w_normals);
+
+	std::cerr << "Got normals.";
+	Eigen::VectorXf fitPlane(7);
+	pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal>::Ptr
+	model_p (new pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal> (search));
+	model_p->setInputNormals(cloud_normals);
+	model_p->setRadiusLimits(0.070, 0.080);
+
+	// Fit the model
+	pcl::RandomSampleConsensus<pcl::PointXYZ> ransac (model_p);
+	ransac.setDistanceThreshold (.01);
+	ransac.computeModel();
+	ransac.getModelCoefficients(fitPlane);
+
+	std::cerr << "Got model: " << fitPlane.transpose() << std::endl;
+	Eigen::Isometry3f retVal = Eigen::Isometry3f::Identity();
+
+	retVal.translate(Eigen::Vector3f(fitPlane[0],fitPlane[1],fitPlane[2]));
+	Eigen::Quaternionf quat;
+	quat.setFromTwoVectors(Eigen::Vector3f(fitPlane[3],fitPlane[4],fitPlane[5]),Eigen::Vector3f::UnitX());
+	retVal.rotate(quat);
+
+	std::cerr << "Returning.\n";
+	return retVal;
+}
+
 std::vector<std::pair<int, double> > ModelMatcher::GetClosestModelsFine(pcl::PointCloud<pcl::PointXYZ>& search, std::vector<int> modelIndices)
 {
 	std::vector<std::pair<int, double> > scores;

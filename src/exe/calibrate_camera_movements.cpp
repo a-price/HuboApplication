@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
 		ePose.rotate(Eigen::AngleAxisd(-M_PI/2, Eigen::Vector3d::UnitZ()));
 		ePose.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
-
+/*
 		Collision_Checker cc;
 		cc.initCollisionChecker();
 		cc.checkSelfCollision(ePose);
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 		tf::poseTFToMsg(tPose, srv.request.Target);
 		srv.request.ArmIndex = 1;
 		poseClient.call(srv);
-
+*/
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
