@@ -1,9 +1,9 @@
-/*
+/**
  *
- * ModelMatcher.cpp
+ * \file ModelMatcher.cpp
  *
- *  Created on: Apr 4, 2013
- *      Author: arprice
+ * \date Apr 4, 2013
+ * \author Andrew Price
  */
 
 #include "HuboApplication/ModelMatcher.h"
@@ -113,7 +113,8 @@ Eigen::Isometry3f ModelMatcher::MatchCylinderModel(pcl::PointCloud<pcl::PointXYZ
 	pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal>::Ptr
 	model_p (new pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal> (search));
 	model_p->setInputNormals(cloud_normals);
-	model_p->setRadiusLimits(0.070, 0.080);
+	model_p->setRadiusLimits(0.040, 0.060);
+	model_p->setAxis(Eigen::Vector3f::UnitZ());
 
 	// Fit the model
 	pcl::RandomSampleConsensus<pcl::PointXYZ> ransac (model_p);
@@ -121,7 +122,6 @@ Eigen::Isometry3f ModelMatcher::MatchCylinderModel(pcl::PointCloud<pcl::PointXYZ
 	ransac.computeModel();
 	ransac.getModelCoefficients(fitPlane);
 
-	std::cerr << "Got model: " << fitPlane.transpose() << std::endl;
 	Eigen::Isometry3f retVal = Eigen::Isometry3f::Identity();
 
 	retVal.translate(Eigen::Vector3f(fitPlane[0],fitPlane[1],fitPlane[2]));
@@ -129,7 +129,6 @@ Eigen::Isometry3f ModelMatcher::MatchCylinderModel(pcl::PointCloud<pcl::PointXYZ
 	quat.setFromTwoVectors(Eigen::Vector3f(fitPlane[3],fitPlane[4],fitPlane[5]),Eigen::Vector3f::UnitX());
 	retVal.rotate(quat);
 
-	std::cerr << "Returning.\n";
 	return retVal;
 }
 
