@@ -16,6 +16,7 @@ typedef enum
 {
 	END_EFFECTOR,   ///< Position the end-effector at the target pose using inverse kinematics
 	JOINT_VECTOR,   ///< Generate a trajectory in joint space only
+	OBJECT_POSE,	///< Generate a trajectory to reach the best graspable point on an object at this position
 	HOME_JOINTS     ///< Attempt to home any joints in the manip_q_vector_t that are nonzero and non-NaN
 } control_mode;
 
@@ -84,6 +85,7 @@ typedef struct
 	control_mode controlMode;      ///< Tells the manipulation daemon whether to use workspace or joint-space control
 	pose_angle_mode poseMode;      ///< Tells the manipulation daemon whether to expect quaternion or Euler angle orientation parameters
 	bool incrementalMode;          ///< Tells the manipulation daemon whether to use incremental or absolute position specifications
+	unsigned int objectIndex;	   ///< Specifies the object class when in OBJECT_POSE control
 	
 	ee_pose_t targetPoseLeft;      ///< Contains all pose parameters to pass to manipulation daemon for Left Hand ik-control
 	ee_pose_t targetPoseRight;     ///< Contains all pose parameters to pass to manipulation daemon for Right Hand ik-control

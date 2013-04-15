@@ -24,6 +24,7 @@
 #include "HuboApplication/HuboStateROS.h"
 #include "HuboApplication/SetHuboJointPositions.h"
 #include "HuboApplication/SetHuboArmPose.h"
+#include "HuboApplication/SetHuboObjectPose.h"
 
 class ROSHubo
 {
@@ -35,6 +36,7 @@ public:
 
 		m_JointService = nh_.advertiseService("/hubo/set_joints", &ROSHubo::srvSetHuboJointPositions, this);
 		m_PoseService = nh_.advertiseService("/hubo/set_arm", &ROSHubo::srvSetHuboArmPose, this);
+		m_ObjectService = nh_.advertiseService("/hubo/set_object", &ROSHubo::srvSetHuboObjectPose, this);
 	}
 
 	bool srvSetHuboJointPositions(HuboApplication::SetHuboJointPositions::Request &req,
@@ -87,6 +89,36 @@ public:
 		m_Manip.setControlMode(END_EFFECTOR);
 		m_Manip.setAngleMode(QUATERNION);
 		m_Manip.setPose(armPose, req.ArmIndex);
+		m_Manip.sendCommand();
+		//std::cerr << armPose.matrix() << std::endl;
+			res.Success = response;
+		return response;
+	}
+
+	bool srvSetHuboObjectPose(HuboApplication::SetHuboObjectPose::Request &req,
+						      HuboApplication::SetHuboObjectPose::Response &res)
+	{
+		bool response = true;
+		Eigen::Affine3d tempPose;
+		Eigen::Isometry3d armPose;
+
+		tf::poseMsgToEigen(req.Target, tempPose);
+		if (tempPose(0,3) != tempPose(0,3)) // null check
+		{
+			res.Success = false;
+			return false;
+		}
+
+		//std::cerr << tempPose.matrix() << std::endl;
+
+		armPose = tempPose.matrix();
+		//armPose.translation() = tempPose.translation();
+		//armPose.linear() = tempPose.rotation();
+		//std::cerr << armPose.matrix() << std::endl;
+
+		m_Manip.setControlMode(OBJECT_POSE);
+		m_Manip.setAngleMode(QUATERNION);
+		m_Manip.setPose(armPose, req.ObjectIndex);
 		m_Manip.sendCommand();
 		//std::cerr << armPose.matrix() << std::endl;
 			res.Success = response;
@@ -160,6 +192,7 @@ private:
 
 	ros::ServiceServer m_JointService;
 	ros::ServiceServer m_PoseService;
+	ros::ServiceServer m_ObjectService;
 	
 	HuboManipulator m_Manip;
 	HuboStateROS m_HuboState;
