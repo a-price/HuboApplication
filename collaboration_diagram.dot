@@ -1,0 +1,73 @@
+digraph g{
+rankdir=TB;
+
+subgraph cluster_vision {
+  label="Vision PC";
+  node [style="filled", fillcolor="burlywood", shape="ellipse"];
+  openni [label="OpenNI"];
+  segm [label="Segmentation"];
+  urdf [label="URDF Publisher"];
+  huboROS [label="ROS<->ACH"];
+  rviz [label="RVIZ"];
+
+  node [style="filled", fillcolor="palegreen", shape="box"];
+  tf [label="TF"];
+  cim [label="ColorImage"];
+  dim [label="DepthImage"];
+  pcl [label="PointCloud"];
+  filter [label="KinectFilter"];
+  joints [label="JointStates"];
+  target [label="TargetPose"];
+
+  openni->tf;
+  openni->cim;
+  openni->dim;
+  openni->pcl;
+
+  cim->filter;
+  dim->filter;
+  pcl->filter;
+
+  filter->segm;
+  tf->segm;
+  segm->tf;
+  segm->target;
+
+  target->huboROS;
+  huboROS->tf;
+  huboROS->joints;
+
+  joints->urdf;
+  urdf->tf;
+  
+  tf->rviz;
+  pcl->rviz;
+
+}
+
+subgraph cluster_motion {
+  label="Motion PC";
+  node [style="filled", fillcolor="red", shape="ellipse"];
+  manipD [label="Manipulation Daemon"];
+  controlD [label="Control Daemon"];
+  hwD [label="Hardware Daemon"];
+}
+
+subgraph cluster_ach {
+  label="ACH Channels";
+  labelloc=bottom;
+  node [style="filled",shape=Msquare];
+  state [label="hubo_state"];
+  manip [label="hubo_manip"];
+
+}
+
+huboROS->manip;
+state->huboROS;
+
+manip->manipD;
+manipD->controlD;
+controlD->hwD;
+hwD->state;
+
+}

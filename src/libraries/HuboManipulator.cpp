@@ -44,7 +44,6 @@ void HuboManipulator::setAngleMode(pose_angle_mode mode)
 
 void HuboManipulator::setPose(Eigen::Isometry3d pose, int side)
 {
-	mInstruction.controlMode = END_EFFECTOR;
 	ee_pose_t newPose;
 	newPose.x = pose.translation().x();
 	newPose.y = pose.translation().y();
