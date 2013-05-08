@@ -1,0 +1,4 @@
+<launch>
+	<include file="$(find openni_launch)/launch/openni.launch"/>
+	<include file="$(find HuboApplication)/launch/ros_hubo.launch"/>
+</launch>
