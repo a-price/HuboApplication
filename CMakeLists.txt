@@ -3,11 +3,14 @@ cmake_minimum_required(VERSION 2.6)
 project(HuboApplication CXX C)
 set(CMAKE_CXX_FLAGS "-std=c++0x")
 
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-#execute_process(COMMAND export "ROS_PACKAGE_PATH=${PROJECT_SOURCE_DIR}:$ROS_PACKAGE_PATH")
-rosbuild_init() #export ROS_PACKAGE_PATH=/path/to/proj:$ROS_PACKAGE_PATH
-rosbuild_gensrv()
-link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf message_filters cv_bridge image_transport eigen_conversions)
+find_package(catkin REQUIRED COMPONENTS roscpp)
+
+file(GLOB service_source "srv/*")
+LIST(SORT service_source)
+add_service_files(DIRECTORY srv  FILES service_source) 
+generate_messages()
+
+#link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf message_filters cv_bridge image_transport eigen_conversions)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/find/")
 
@@ -105,7 +108,7 @@ endforeach(utest_src_file)
 
 # Build system tests
 message(STATUS "\n-- SYSTEM TESTS: ")
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+#add_custom_target(ucheck COMMAND ${CMAKE_CTEST_COMMAND})
 foreach(test_src_file ${system_tests_source})
     get_filename_component(test_base ${test_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}" )
