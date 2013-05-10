@@ -119,7 +119,7 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 	sor.setMeanK (MIN_CLOUD_SIZE);
 	sor.setStddevMulThresh (1.0);
 	sor.filter (*pCloudFiltered);
-	toc("Outliers");
+	toc("Outliers"); if (!ros::ok()) {return;}
 
 	// FIXME: This is apparently a bug in PCL 1.5 where
 	// if the # of points is too low it segfaults.
@@ -137,7 +137,7 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 	ec.setSearchMethod (tree);
 	ec.setInputCloud (pCloudFiltered);
 	ec.extract (cluster_indices);
-	toc("Clusters");
+	toc("Clusters"); if (!ros::ok()) {return;}
 
 	std::cerr << "Found " << cluster_indices.size() << " clusters.\n";
 	if (cluster_indices.size() < 1) {return;}

@@ -7,7 +7,7 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #execute_process(COMMAND export "ROS_PACKAGE_PATH=${PROJECT_SOURCE_DIR}:$ROS_PACKAGE_PATH")
 rosbuild_init() #export ROS_PACKAGE_PATH=/path/to/proj:$ROS_PACKAGE_PATH
 rosbuild_gensrv()
-link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf message_filters cv_bridge image_transport eigen_conversions)
+link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf message_filters cv_bridge image_transport eigen_conversions rgbd_graph_segmentation)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/find/")
 
@@ -46,6 +46,8 @@ link_libraries(ach)
 
 # hubo-motion-rt
 link_libraries(huboctrl daemonizer rt huboparams)
+
+#link_libraries(rgbd_graph_segmentation)
 
 # Include CppUnit
 find_package(CppUnit)

@@ -16,6 +16,7 @@
   <depend package="tf"/>
   <depend package="eigen_conversions"/>
   <depend package="tabletop_object_detector" />
+  <depend package="rgbd_graph_segmentation" />
 </package>
 
 

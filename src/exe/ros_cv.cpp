@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <rgbd_graph_segmentation/rgbd_graph_segmentation.h>
+
 // ROS includes
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -87,6 +89,16 @@ public:
 		ROS_WARN("Got sync'd frames.\n");
 		cv_bridge::CvImagePtr imgPtr = cv_bridge::toCvCopy(color, "bgr8");
 		
+		ROS_INFO("Beginning Segmentation.");
+		cv_bridge::CvImagePtr depthImgPtr = cv_bridge::toCvCopy(depth, "mono8");
+		rgbd_graph_segmentation::Segmentation segmentation = rgbd_graph_segmentation::segment(imgPtr->image, depthImgPtr->image);
+
+		ROS_INFO("Writing File.");
+		cv::Mat segImg = segmentation.segmentationImage();
+		cv::imwrite("/home/arprice/testSeg.png",segImg);
+		//cv::imshow("Segmented", segImg);
+		ROS_INFO("Done.");
+
 		cv::Point CoM = tracker.getCoM(imgPtr->image);
 		if (CoM.x == -1) {return;} // No color found
 
