@@ -27,8 +27,8 @@
 
 #include <boost/timer.hpp>
 
-#include "HuboApplication/tf_eigen.h"
-#include "HuboApplication/ModelMatcher.h"
+#include "hubo_vision/tf_eigen.h"
+#include "hubo_vision/ModelMatcher.h"
 
 ros::Subscriber cloudSub;
 ros::Publisher cloudPub;

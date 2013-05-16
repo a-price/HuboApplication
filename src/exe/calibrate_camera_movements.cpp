@@ -7,8 +7,8 @@
 
 #include <ros/ros.h>
 
-#include "HuboApplication/SetHuboArmPose.h"
-#include "HuboApplication/tf_eigen.h"
+#include "hubo_vision/SetHuboArmPose.h"
+#include "hubo_vision/tf_eigen.h"
 #include "Collision_Checker.h"
 
 
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "simple_tracker");
 
 	ros::NodeHandle nh;
-	ros::ServiceClient poseClient = nh.serviceClient<HuboApplication::SetHuboArmPose>("/hubo/set_arm");
+	ros::ServiceClient poseClient = nh.serviceClient<hubo_vision::SetHuboArmPose>("/hubo/set_arm");
 
 	ros::Rate loop_rate(0.1);
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
 		Eigen::Isometry3d ePose;
 		tf::StampedTransform tPose;
-		HuboApplication::SetHuboArmPose srv;
+		hubo_vision::SetHuboArmPose srv;
 
 		ePose.matrix() <<   1,  0,  0, .3,
 							0,  1,  0, .2,

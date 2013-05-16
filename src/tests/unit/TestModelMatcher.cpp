@@ -10,8 +10,8 @@
 
 #include <iostream>
 #include <sstream>
-#include "HuboApplication/SampleModelGenerator.h"
-#include "HuboApplication/ModelMatcher.h"
+#include "hubo_vision/SampleModelGenerator.h"
+#include "hubo_vision/ModelMatcher.h"
 
 /**
  * \class TestModelMatcher
@@ -37,7 +37,7 @@ public:
 	void setUp()
 	{
 		// Load .pcd files
-		directory = "/home/arprice/fuerte_workspace/sandbox/HuboApplication/src/tests/unit/resources/";
+		directory = "/home/arprice/fuerte_workspace/sandbox/hubo_vision/src/tests/unit/resources/";
 		std::vector<std::string> files;
 
 		files.push_back("ism_train_cat.pcd");

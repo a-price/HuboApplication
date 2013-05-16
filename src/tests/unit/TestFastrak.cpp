@@ -8,7 +8,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "HuboApplication/Fastrak.h"
+#include "hubo_vision/Fastrak.h"
 #include <ach.h>
 
 /**

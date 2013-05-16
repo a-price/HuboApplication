@@ -18,11 +18,11 @@
 
 #include <Eigen/Core>
 
-#include "HuboApplication/tf_eigen.h"
-#include "HuboApplication/hubo_joint_names.h"
+#include "hubo_vision/tf_eigen.h"
+#include "hubo_vision/hubo_joint_names.h"
 
-#include "HuboApplication/SetHuboJointPositions.h"
-#include "HuboApplication/SetHuboArmPose.h"
+#include "hubo_vision/SetHuboJointPositions.h"
+#include "hubo_vision/SetHuboArmPose.h"
 
 
 /**
@@ -36,8 +36,8 @@ public:
 	ROSHuboTester()
 	{
 		m_JointPublisher = nh_.advertise<sensor_msgs::JointState>("/hubo/target_joints", 1);
-		m_JointClient = nh_.serviceClient<HuboApplication::SetHuboJointPositions>("/hubo/set_joints");
-		m_PoseClient = nh_.serviceClient<HuboApplication::SetHuboArmPose>("/hubo/set_arm");
+		m_JointClient = nh_.serviceClient<hubo_vision::SetHuboJointPositions>("/hubo/set_joints");
+		m_PoseClient = nh_.serviceClient<hubo_vision::SetHuboArmPose>("/hubo/set_arm");
 	}
 
 	void publishSample(int seed)
@@ -55,7 +55,7 @@ public:
 		joints.position.push_back(-(cos(seed/50.0)+1.0)/3.0);
 		joints.name.push_back(HUBO_JOINT_NAMES[REB]);
 		
-		HuboApplication::SetHuboJointPositions srv;
+		hubo_vision::SetHuboJointPositions srv;
 		srv.request.Targets = joints;
 		if (m_JointClient.call(srv))
 		{
@@ -83,7 +83,7 @@ public:
 				           0,  0,   1,  -0.074576,
 				           0,  0,   0,          1;
 
-		HuboApplication::SetHuboArmPose srv;
+		hubo_vision::SetHuboArmPose srv;
 		tf::poseEigenToMsg(ePose, srv.request.Target);
 		//srv.request.Target = pose;
 		srv.request.ArmIndex = side;

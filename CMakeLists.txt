@@ -22,7 +22,8 @@ catkin_package(
     CATKIN_DEPENDS message_runtime roscpp std_msgs sensor_msgs cv_bridge image_transport tf eigen_conversions tabletop_object_detector
     DEPENDS ach )
 
-
+link_libraries(${catkin_LIBRARIES})
+link_libraries(tf)
 
 #link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf message_filters cv_bridge image_transport eigen_conversions)
 
@@ -104,7 +105,8 @@ foreach(test_src_file ${tests_source})
     get_filename_component(test_base ${test_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}" )
     add_executable(${test_base} ${test_src_file} ${unit_tests_source})
-    target_link_libraries(${test_base} ${PROJECT_NAME})
+    target_link_libraries(${test_base} ${catkin_LIBRARIES} ${PROJECT_NAME})
+    add_dependencies(${test_base} ${PROJECT_NAME}_gencpp)
 endforeach(test_src_file)
 
 # Build unit tests
@@ -114,7 +116,8 @@ foreach(utest_src_file ${unit_tests_source})
     get_filename_component(test_base ${utest_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}" )
     add_executable(${test_base} "src/tests/test_units.cpp" ${utest_src_file})
-    target_link_libraries(${test_base} ${PROJECT_NAME})
+    target_link_libraries(${test_base} ${catkin_LIBRARIES} ${PROJECT_NAME})
+    add_dependencies(${test_base} ${PROJECT_NAME}_gencpp)
     add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
     add_dependencies(check ${test_base})
@@ -127,7 +130,8 @@ foreach(test_src_file ${system_tests_source})
     get_filename_component(test_base ${test_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}" )
     add_executable(${test_base} ${test_src_file})
-    target_link_libraries(${test_base} ${PROJECT_NAME})
+    target_link_libraries(${test_base} ${catkin_LIBRARIES} ${PROJECT_NAME})
+    add_dependencies(${test_base} ${PROJECT_NAME}_gencpp)
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
 endforeach(test_src_file)
 
@@ -137,7 +141,8 @@ foreach(script_src_file ${scripts_source})
     get_filename_component(script_base ${script_src_file} NAME_WE)
     message(STATUS "Adding executable ${script_base}" )
     add_executable(${script_base} ${script_src_file})
-    target_link_libraries(${script_base} ${PROJECT_NAME})
+    target_link_libraries(${script_base} ${catkin_LIBRARIES} ${PROJECT_NAME})
+    add_dependencies(${script_base} ${PROJECT_NAME}_gencpp)
     add_custom_target(${script_base}.run ${script_base} ${ARGN})
 endforeach(script_src_file)
 

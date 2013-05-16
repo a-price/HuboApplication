@@ -5,7 +5,7 @@
  * \author Andrew Price
  */
 
-#include "HuboApplication/HuboManipulator.h"
+#include "hubo_vision/HuboManipulator.h"
 #include <iostream>
 
 

@@ -5,7 +5,7 @@
  *      Author: arprice
  */
 
-#include "HuboApplication/SampleModelGenerator.h"
+#include "hubo_vision/SampleModelGenerator.h"
 
 SampleModelGenerator::SampleModelGenerator()
 {

@@ -5,7 +5,7 @@
  * \author Andrew Price
  */
 
-#include "HuboApplication/Fastrak.h"
+#include "hubo_vision/Fastrak.h"
 #include <Eigen/Geometry>
 #include <boost/thread/thread.hpp>
 #include <iostream>

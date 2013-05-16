@@ -9,7 +9,7 @@
 #define HUBO_STATE_ROS_H
 
 #include <hubo.h>
-#include "HuboApplication/hubo_joint_names.h"
+#include "hubo_vision/hubo_joint_names.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

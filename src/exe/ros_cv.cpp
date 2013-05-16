@@ -40,10 +40,10 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
-#include "HuboApplication/ColorTracker.h"
-#include "HuboApplication/tf_eigen.h"
+#include "hubo_vision/ColorTracker.h"
+#include "hubo_vision/tf_eigen.h"
 
-#include "HuboApplication/SetHuboArmPose.h"
+#include "hubo_vision/SetHuboArmPose.h"
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,sensor_msgs::Image, sensor_msgs::PointCloud2> KinectSyncPolicy;
 //typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> KinectSyncPolicy;
@@ -77,7 +77,7 @@ public:
 		cloud_sub_.registerCallback(boost::bind(&cloudCallbackTest, _1));
 		sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2, _3));
 
-		pose_client_ = nh_.serviceClient<HuboApplication::SetHuboArmPose>("/hubo/set_arm");
+		pose_client_ = nh_.serviceClient<hubo_vision::SetHuboArmPose>("/hubo/set_arm");
 		//sync_.registerCallback(boost::bind(&SimpleKinectTracker::kinectCallback, this, _1, _2));
 	}
 
@@ -114,7 +114,7 @@ public:
 		// Get pose in body frame, grab it. eventually in a different node
 		tf::StampedTransform tTorsoObject, tTorsoHead;
 		Eigen::Isometry3d eTorsoObject, eTorsoHead;
-		HuboApplication::SetHuboArmPose srv;
+		hubo_vision::SetHuboArmPose srv;
 		try
 		{
 			//listener_.lookupTransform("/Body_Torso", "/target_object", ros::Time(0), tTorsoObject);
@@ -152,7 +152,7 @@ public:
 		ePose = Eigen::Isometry3d::Identity();
 		ePose.translate(eTarget.cast<double>());
 
-		HuboApplication::SetHuboArmPose srv;
+		hubo_vision::SetHuboArmPose srv;
         tf::poseEigenToMsg(ePose, srv.request.Target);
 		srv.request.ArmIndex = 0;
 		pose_client_.call(srv);

@@ -19,12 +19,12 @@
 
 #include <Eigen/Core>
 
-#include "HuboApplication/tf_eigen.h"
-#include "HuboApplication/HuboManipulator.h"
-#include "HuboApplication/HuboStateROS.h"
-#include "HuboApplication/SetHuboJointPositions.h"
-#include "HuboApplication/SetHuboArmPose.h"
-#include "HuboApplication/SetHuboObjectPose.h"
+#include "hubo_vision/tf_eigen.h"
+#include "hubo_vision/HuboManipulator.h"
+#include "hubo_vision/HuboStateROS.h"
+#include "hubo_vision/SetHuboJointPositions.h"
+#include "hubo_vision/SetHuboArmPose.h"
+#include "hubo_vision/SetHuboObjectPose.h"
 
 class ROSHubo
 {
@@ -39,8 +39,8 @@ public:
 		m_ObjectService = nh_.advertiseService("/hubo/set_object", &ROSHubo::srvSetHuboObjectPose, this);
 	}
 
-	bool srvSetHuboJointPositions(HuboApplication::SetHuboJointPositions::Request &req,
-								  HuboApplication::SetHuboJointPositions::Response &res)
+	bool srvSetHuboJointPositions(hubo_vision::SetHuboJointPositions::Request &req,
+								  hubo_vision::SetHuboJointPositions::Response &res)
 	{
 		bool response = true;
 		// Look up the index of each joint by its name and add it to the control signal
@@ -65,8 +65,8 @@ public:
 		return response;
 	}
 	
-	bool srvSetHuboArmPose(HuboApplication::SetHuboArmPose::Request &req,
-						   HuboApplication::SetHuboArmPose::Response &res)
+	bool srvSetHuboArmPose(hubo_vision::SetHuboArmPose::Request &req,
+						   hubo_vision::SetHuboArmPose::Response &res)
 	{
 		bool response = true;
 		Eigen::Affine3d tempPose;
@@ -95,8 +95,8 @@ public:
 		return response;
 	}
 
-	bool srvSetHuboObjectPose(HuboApplication::SetHuboObjectPose::Request &req,
-						      HuboApplication::SetHuboObjectPose::Response &res)
+	bool srvSetHuboObjectPose(hubo_vision::SetHuboObjectPose::Request &req,
+						      hubo_vision::SetHuboObjectPose::Response &res)
 	{
 		bool response = true;
 		Eigen::Affine3d tempPose;

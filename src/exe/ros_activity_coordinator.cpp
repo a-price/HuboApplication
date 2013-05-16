@@ -12,7 +12,7 @@
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
 
-#include "HuboApplication/SetHuboObjectPose.h"
+#include "hubo_vision/SetHuboObjectPose.h"
 
 
 int main(int argc, char** argv)
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	tf::TransformListener listener;
 	ros::ServiceClient pose_client;
 
-	pose_client = nh.serviceClient<HuboApplication::SetHuboObjectPose>("/hubo/set_object");
+	pose_client = nh.serviceClient<hubo_vision::SetHuboObjectPose>("/hubo/set_object");
 
 	std::string text;
 
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
 		// Get pose in body frame, grab it. eventually in a different node
 		tf::StampedTransform tTorsoObject;
-		HuboApplication::SetHuboObjectPose srv;
+		hubo_vision::SetHuboObjectPose srv;
 		try
 		{
 			listener.lookupTransform("/Body_Torso", "/cylinder", ros::Time(0), tTorsoObject);

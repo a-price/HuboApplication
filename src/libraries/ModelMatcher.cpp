@@ -6,7 +6,7 @@
  * \author Andrew Price
  */
 
-#include "HuboApplication/ModelMatcher.h"
+#include "hubo_vision/ModelMatcher.h"
 
 ModelMatcher::ModelMatcher()
 {

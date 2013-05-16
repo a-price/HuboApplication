@@ -17,8 +17,8 @@
 
 #include <Eigen/Core>
 
-#include "HuboApplication/tf_eigen.h"
-#include "HuboApplication/hubo_joint_names.h"
+#include "hubo_vision/tf_eigen.h"
+#include "hubo_vision/hubo_joint_names.h"
 
 /**
  * \class HuboSeeHuboDo
