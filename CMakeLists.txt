@@ -1,14 +1,28 @@
 # Project Description
 cmake_minimum_required(VERSION 2.6)
-project(HuboApplication CXX C)
+project(hubo_vision CXX C)
 set(CMAKE_CXX_FLAGS "-std=c++0x")
 
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation genmsg std_msgs sensor_msgs geometry_msgs)
 
 file(GLOB service_source "srv/*")
 LIST(SORT service_source)
-add_service_files(DIRECTORY srv  FILES service_source) 
-generate_messages()
+foreach(service_src_file ${service_source})
+    get_filename_component(service_base ${service_src_file} NAME)
+    message(STATUS "Adding service ${service_base}" )
+    add_service_files(DIRECTORY srv  FILES ${service_base}) 
+endforeach(service_src_file)
+
+# Actually generate the language-specific message and service files
+generate_messages(DEPENDENCIES std_msgs sensor_msgs geometry_msgs)
+
+catkin_package(
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS message_runtime roscpp std_msgs sensor_msgs cv_bridge image_transport tf eigen_conversions tabletop_object_detector
+    DEPENDS ach )
+
+
 
 #link_libraries(roscpp roscpp_serialization rosconsole rostime roslib tf message_filters cv_bridge image_transport eigen_conversions)
 
