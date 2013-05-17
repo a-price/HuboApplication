@@ -10,6 +10,7 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
+#include <visualization_msgs/Marker.h>
 //#include <tabletop_object_detector/TabletopSegmentation.h>
 
 #include <pcl/ros/conversions.h>
@@ -24,6 +25,7 @@
 #include <pcl/sample_consensus/ransac.h>
 #include <pcl/sample_consensus/sac_model_plane.h>
 #include <pcl/segmentation/extract_clusters.h>
+#include <pcl/io/pcd_io.h>
 
 #include <boost/timer.hpp>
 
@@ -34,6 +36,7 @@ ros::Subscriber cloudSub;
 ros::Publisher cloudPub;
 tf::TransformListener* tfListener;
 tf::TransformBroadcaster* tfBroadcaster;
+ros::Publisher cylPub;
 boost::timer timer;
 const size_t MIN_CLOUD_SIZE = 50;
 
@@ -169,14 +172,17 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 
 	if (cluster_indices[0].indices.size() < MIN_CLOUD_SIZE) {return;}
 
-
 	boost::shared_ptr<pcl::PointIndices> *ptrCluster = new boost::shared_ptr<pcl::PointIndices>(&cluster_indices[0]);
 	extract.setInputCloud (pCloudFiltered);
 	extract.setIndices (*ptrCluster);
 	extract.setNegative (false);
 	extract.filter (*pSubCloud);
 	std::cerr << "Points before Cylinder: " << pSubCloud->points.size() << std::endl;
+
 	ModelMatcher mm;
+	mm.LoadModelFiles("./models/");
+	std::vector<int> modelIndices; modelIndices.push_back(0);
+	//mm.GetClosestModelsFine(*pSubCloud, modelIndices);
 	Eigen::Isometry3f bottlePose = mm.MatchCylinderModel(pSubCloud);//.cast<double>();
 
 	// Project the bottom of the cylinder to the table frame
@@ -191,6 +197,31 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr points)
 	// recognize with database
 
 	// publish model types
+	// Create a marker to show parameters
+	visualization_msgs::Marker marker;
+	marker.header.frame_id = "/camera_depth_optical_frame";
+	//marker.header.stamp = headerTime;
+	marker.ns = "hubo";
+	marker.id = 0;
+	marker.type = visualization_msgs::Marker::CYLINDER;
+	marker.action = visualization_msgs::Marker::ADD;
+	marker.pose.position.x = tCyl.getOrigin().x();
+	marker.pose.position.y = tCyl.getOrigin().y();
+	marker.pose.position.z = tCyl.getOrigin().z();
+	marker.pose.orientation.x = tCyl.getRotation().x();
+	marker.pose.orientation.y = tCyl.getRotation().y();
+	marker.pose.orientation.z = tCyl.getRotation().z();
+	marker.pose.orientation.w = tCyl.getRotation().w();
+	marker.scale.x = 0.06;
+	marker.scale.y = 0.06;
+	marker.scale.z = 0.10;
+	marker.color.a = 1.0; // based on # & weight of connections
+	marker.color.r = 1.0;
+	marker.color.g = 0.0;
+	marker.color.b = 0.0;
+
+	cylPub.publish(marker);
+	//pcl::io::savePCDFileASCII("partial_cylinder.pcd", *pSubCloud);
 }
 
 
@@ -205,6 +236,7 @@ int main(int argc, char** argv)
 	cloudPub = nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 1);
 	tfListener = new tf::TransformListener;
 	tfBroadcaster = new tf::TransformBroadcaster;
+	cylPub = nh.advertise<visualization_msgs::Marker>( "model_marker", 1 );
 	//ros::ServiceClient tsrClient = nh.serviceClient<tabletop_object_detector::TabletopSegmentationRequest>("/hubo/set_arm");
 
 	ros::spin();

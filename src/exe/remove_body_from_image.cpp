@@ -11,6 +11,8 @@
 #include <rgbd_graph_segmentation/rgbd_graph_segmentation.h>
 
 #include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/Image.h>
@@ -54,6 +56,7 @@ public:
 		depth_sub_.registerCallback(boost::bind(&depthCallbackTest, _1));
 		visual_calib_sub_.registerCallback(boost::bind(&SegmentedRobotRemover::colorCalibCallback, this, _1));
 		sync_.registerCallback(boost::bind(&SegmentedRobotRemover::kinectCallback, this, _1, _2));
+		cv::namedWindow("segmented");
 	}
 
 	void kinectCallback(const sensor_msgs::ImageConstPtr color, const sensor_msgs::ImageConstPtr depth)
@@ -65,6 +68,7 @@ public:
 		cv_bridge::CvImagePtr colorImgPtr = cv_bridge::toCvCopy(color, "bgr8");
 		cv_bridge::CvImagePtr depthImgPtr = cv_bridge::toCvCopy(depth, "mono8");
 		rgbd_graph_segmentation::Segmentation segmentation = rgbd_graph_segmentation::segment(colorImgPtr->image, depthImgPtr->image);
+
 
 		// Project coordinates of all TF's into current camera frame
 		std::vector<std::string> frameNames;
@@ -79,6 +83,7 @@ public:
 
 		std::cout << "Calibration: " << calibration_ << "\n";
 
+		// TODO: draw lines between parent and child joints
 		for (std::vector<std::string>::iterator iter = frameNames.begin();
 			 iter != frameNames.end(); ++iter)
 		{
@@ -123,6 +128,34 @@ public:
 			// set these pixels to bad...
 		}
 
+		// See if a target is published, and draw that point
+		cv::Point2i targetPoint;
+		try
+		{
+			listener_.lookupTransform("/camera_depth_optical_frame", "/cylinder", ros::Time(0), tHeadJoint);
+			Eigen::Vector3d point3d = Eigen::Vector3d( tHeadJoint.getOrigin().x(),
+					 tHeadJoint.getOrigin().y(),
+					 tHeadJoint.getOrigin().z());
+			point3d /= point3d[2];
+			point = calibration_ * point3d;
+			if (point[0] > 0 && point[0] < colorImgPtr->image.cols &&
+				point[1] > 0 && point[1] < colorImgPtr->image.rows)
+			{
+				targetPoint = cv::Point2i(round((double)(point[0])), round((double)(point[1])));
+
+				std::cerr << "cylinder" << ": " << point.transpose() << "\n";
+			}
+		}
+		catch(tf::TransformException& ex)
+		{
+			ROS_ERROR("%s", ex.what());
+		}
+
+		// Display the final image
+		cv::Mat finalImage = segmentation.segmentationImage();
+		cv::circle(finalImage, targetPoint, 10, cv::Scalar(0,255,255), 3);
+		cv::imshow("segmented", finalImage);
+		cv::waitKey(1);
 	}
 
 	void colorCalibCallback(const sensor_msgs::CameraInfoConstPtr ciPtr)

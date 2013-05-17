@@ -23,6 +23,8 @@
 #include <pcl/registration/icp.h>
 #include <pcl/sample_consensus/sac_model_cylinder.h>
 
+#include <boost/filesystem.hpp>
+
 class ModelMatcher
 {
 public:
@@ -35,6 +37,7 @@ public:
 	std::vector<std::pair<int, double> > GetClosestModelsCoarse(Eigen::VectorXf search);
 	std::vector<std::pair<int, double> > GetClosestModelsFine(pcl::PointCloud<pcl::PointXYZ>& search, std::vector<int> modelIndices);
 
+	void LoadModelFiles(std::string directory);
 	void LoadModelFiles(std::string directory, std::vector<std::string> files);
 	void GetDatabaseCloud(int index, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud);
 

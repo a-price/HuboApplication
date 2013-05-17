@@ -15,6 +15,7 @@
 #include <std_msgs/String.h>
 #include <tf/transform_broadcaster.h>
 #include <sensor_msgs/JointState.h>
+#include <visualization_msgs/Marker.h>
 #include <eigen_conversions/eigen_msg.h>
 
 #include <Eigen/Core>
@@ -109,12 +110,9 @@ public:
 			return false;
 		}
 
-		//std::cerr << tempPose.matrix() << std::endl;
-
 		armPose = tempPose.matrix();
-		//armPose.translation() = tempPose.translation();
-		//armPose.linear() = tempPose.rotation();
-		//std::cerr << armPose.matrix() << std::endl;
+
+		//std::cerr << tempPose.matrix() << std::endl;
 
 		m_Manip.setControlMode(OBJECT_POSE);
 		m_Manip.setAngleMode(QUATERNION);

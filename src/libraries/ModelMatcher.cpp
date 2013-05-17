@@ -109,24 +109,24 @@ Eigen::Isometry3f ModelMatcher::MatchCylinderModel(pcl::PointCloud<pcl::PointXYZ
 	//pcl::concatenateFields(*search, *cloud_normals, *search_w_normals);
 
 	std::cerr << "Got normals.";
-	Eigen::VectorXf fitPlane(7);
+	Eigen::VectorXf fitCylinder(7);
 	pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal>::Ptr
-	model_p (new pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal> (search));
+		model_p (new pcl::SampleConsensusModelCylinder<pcl::PointXYZ, pcl::Normal> (search));
 	model_p->setInputNormals(cloud_normals);
-	model_p->setRadiusLimits(0.040, 0.060);
-	model_p->setAxis(Eigen::Vector3f::UnitZ());
+	model_p->setRadiusLimits(0.030, 0.050);
+	//model_p->setAxis(Eigen::Vector3f::UnitZ());
 
 	// Fit the model
 	pcl::RandomSampleConsensus<pcl::PointXYZ> ransac (model_p);
 	ransac.setDistanceThreshold (.01);
 	ransac.computeModel();
-	ransac.getModelCoefficients(fitPlane);
+	ransac.getModelCoefficients(fitCylinder);
 
 	Eigen::Isometry3f retVal = Eigen::Isometry3f::Identity();
 
-	retVal.translate(Eigen::Vector3f(fitPlane[0],fitPlane[1],fitPlane[2]));
+	retVal.translate(Eigen::Vector3f(fitCylinder[0],fitCylinder[1],fitCylinder[2]));
 	Eigen::Quaternionf quat;
-	quat.setFromTwoVectors(Eigen::Vector3f(fitPlane[3],fitPlane[4],fitPlane[5]),Eigen::Vector3f::UnitX());
+	quat.setFromTwoVectors(Eigen::Vector3f(fitCylinder[3],fitCylinder[4],fitCylinder[5]),Eigen::Vector3f::UnitZ());
 	retVal.rotate(quat);
 
 	return retVal;
@@ -161,6 +161,25 @@ std::vector<std::pair<int, double> > ModelMatcher::GetClosestModelsFine(pcl::Poi
 	std::sort(scores.begin(), scores.end(), this->scoreCompare);
 
 	return scores;
+}
+
+void ModelMatcher::LoadModelFiles(std::string directory)
+{
+	boost::filesystem::path bDirectory(directory);
+	boost::filesystem::directory_iterator iter(bDirectory), end;
+
+	std::vector<std::string> files;
+
+	for(;iter != end; ++iter)
+	{
+		boost::filesystem::directory_entry file = *iter;
+		if (file.path().extension() == ".pcd")
+		{
+			files.push_back(file.path().filename().string());
+		}
+	}
+
+	LoadModelFiles(directory, files);
 }
 
 void ModelMatcher::LoadModelFiles(std::string directory, std::vector<std::string> files)
